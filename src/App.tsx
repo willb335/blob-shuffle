@@ -6,6 +6,7 @@ import { pathArray } from './worker';
 import { Blob } from './Blob';
 
 const BLOB_SIZE = 8;
+const BLOB_COUNT = 10000;
 
 const BlobContainer = styled.div`
   display: flex;
@@ -16,40 +17,53 @@ const BlobContainer = styled.div`
 
 function App() {
   const [blobPaths, setBlobPaths] = useState<string[]>([]);
-  const [blobWorker, blobWorkerStatus] = useWorker(pathArray, {
+  const [
+    blobWorker,
+    { status: blobWorkerStatus, kill: killBlobWorker },
+  ] = useWorker(pathArray, {
     remoteDependencies: ['https://unpkg.com/blobs/v2'],
   });
 
   useEffect(() => {
     async function runBlobCreation() {
       try {
-        const result: string[] = await blobWorker(BLOB_SIZE); // non-blocking UI
-        setBlobPaths(result);
+        console.log('Start.');
+
+        const result: string[] = await blobWorker(BLOB_SIZE, BLOB_COUNT); // non-blocking UI
         console.log('End.', result);
+
+        setBlobPaths(result);
       } catch (e) {
         console.log('error', e);
       }
     }
 
     runBlobCreation();
-  }, [blobWorker]);
+  }, []);
+
+  useEffect(() => {
+    console.log(blobWorkerStatus);
+  }, [blobWorkerStatus]);
+
+  useEffect(() => {
+    if (blobPaths.length > 0) console.log('blobPaths update');
+  }, [blobPaths]);
 
   return (
     <BlobContainer>
       <button>Click Me</button>
-      {blobWorkerStatus.status}
-      {blobWorkerStatus.status === 'SUCCESS' &&
-        blobPaths.map(
-          (path: string, index: number): JSX.Element => (
-            <Blob
-              key={index}
-              path={path}
-              width={BLOB_SIZE}
-              height={BLOB_SIZE}
-              fill={'pink'}
-            />
-          )
-        )}
+      {blobWorkerStatus}
+      {blobPaths.map(
+        (path: string, index: number): JSX.Element => (
+          <Blob
+            key={index}
+            path={path}
+            width={BLOB_SIZE}
+            height={BLOB_SIZE}
+            fill={'pink'}
+          />
+        )
+      )}
     </BlobContainer>
   );
 }
