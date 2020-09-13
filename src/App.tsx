@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useWorker, WORKER_STATUS } from '@koale/useworker';
 
+import { pathArray } from './worker';
 import { Blob } from './Blob';
 
-import * as blobs from 'blobs/v2';
+const BLOB_SIZE = 8;
 
 const BlobContainer = styled.div`
   display: flex;
@@ -12,31 +14,42 @@ const BlobContainer = styled.div`
   align-items: center;
 `;
 
-const BLOB_COUNT = 10;
-const BLOB_SIZE = 8;
-
 function App() {
+  const [blobPaths, setBlobPaths] = useState<string[]>([]);
+  const [blobWorker, blobWorkerStatus] = useWorker(pathArray, {
+    remoteDependencies: ['https://unpkg.com/blobs/v2'],
+  });
+
+  useEffect(() => {
+    async function runBlobCreation() {
+      try {
+        const result: string[] = await blobWorker(BLOB_SIZE); // non-blocking UI
+        setBlobPaths(result);
+        console.log('End.', result);
+      } catch (e) {
+        console.log('error', e);
+      }
+    }
+
+    runBlobCreation();
+  }, [blobWorker]);
+
   return (
     <BlobContainer>
-      {Array.from(Array(BLOB_COUNT)).map((_, i) => {
-        const seed = Math.random();
-        const svgPath = blobs.svgPath({
-          seed,
-          extraPoints: 8,
-          randomness: 4,
-          size: BLOB_SIZE,
-        });
-
-        return (
-          <Blob
-            height={BLOB_SIZE}
-            width={BLOB_SIZE}
-            path={svgPath}
-            fill="#FF0066"
-            key={seed + i}
-          />
-        );
-      })}
+      <button>Click Me</button>
+      {blobWorkerStatus.status}
+      {blobWorkerStatus.status === 'SUCCESS' &&
+        blobPaths.map(
+          (path: string, index: number): JSX.Element => (
+            <Blob
+              key={index}
+              path={path}
+              width={BLOB_SIZE}
+              height={BLOB_SIZE}
+              fill={'pink'}
+            />
+          )
+        )}
     </BlobContainer>
   );
 }
