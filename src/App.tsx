@@ -4,9 +4,10 @@ import { useWorker, WORKER_STATUS } from '@koale/useworker';
 
 import { pathArray } from './worker';
 import { Blob } from './Blob';
+import logo from './react.svg';
 
 const BLOB_SIZE = 8;
-const BLOB_COUNT = 10000;
+const BLOB_COUNT = 30000;
 
 const BlobContainer = styled.div`
   display: flex;
@@ -51,19 +52,21 @@ function App() {
 
   return (
     <BlobContainer>
+      <img src={logo} className="App-logo" alt="logo" />
       <button>Click Me</button>
       {blobWorkerStatus}
-      {blobPaths.map(
-        (path: string, index: number): JSX.Element => (
-          <Blob
-            key={index}
-            path={path}
-            width={BLOB_SIZE}
-            height={BLOB_SIZE}
-            fill={'pink'}
-          />
-        )
-      )}
+      {blobWorkerStatus === WORKER_STATUS.SUCCESS &&
+        blobPaths.map(
+          (path: string, index: number): JSX.Element => (
+            <Blob
+              key={index}
+              path={path}
+              width={BLOB_SIZE}
+              height={BLOB_SIZE}
+              fill={'pink'}
+            />
+          )
+        )}
     </BlobContainer>
   );
 }
