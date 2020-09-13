@@ -16,6 +16,31 @@ html {
   -webkit-text-size-adjust: 100%; /* 2 */
 }
 
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+  border: 2px solid red;
+  animation-name: spin;
+  animation-duration: 5000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; 
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+/* @media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+} */
+
 /* Sections
    ========================================================================== */
 
