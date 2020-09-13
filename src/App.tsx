@@ -6,8 +6,8 @@ import { pathArray } from './worker';
 import { Blob } from './Blob';
 import logo from './react.svg';
 
-const BLOB_SIZE = 8;
-const BLOB_COUNT = 30000;
+const BLOB_SIZE = 32;
+const BLOB_COUNT = 100;
 
 const BlobContainer = styled.div`
   display: flex;
@@ -17,6 +17,8 @@ const BlobContainer = styled.div`
 `;
 
 function App() {
+  const [blobCount, setBlobCount] = useState(1000);
+  const [blobSize, setBlobSize] = useState(16);
   const [blobPaths, setBlobPaths] = useState<string[]>([]);
   const [
     blobWorker,
@@ -30,25 +32,21 @@ function App() {
       try {
         console.log('Start.');
 
-        const result: string[] = await blobWorker(BLOB_SIZE, BLOB_COUNT); // non-blocking UI
+        const result: string[] = await blobWorker(blobSize, blobCount); // non-blocking UI
         console.log('End.', result);
 
         setBlobPaths(result);
+        setBlobCount(50000);
+        setBlobSize(8);
       } catch (e) {
         console.log('error', e);
       }
     }
 
+    // if (blobWorkerStatus === WORKER_STATUS.PENDING) {
     runBlobCreation();
-  }, []);
-
-  useEffect(() => {
-    console.log(blobWorkerStatus);
-  }, [blobWorkerStatus]);
-
-  useEffect(() => {
-    if (blobPaths.length > 0) console.log('blobPaths update');
-  }, [blobPaths]);
+    // }
+  }, [blobCount, blobSize, blobWorkerStatus, blobWorker]);
 
   return (
     <BlobContainer>
@@ -61,8 +59,8 @@ function App() {
             <Blob
               key={index}
               path={path}
-              width={BLOB_SIZE}
-              height={BLOB_SIZE}
+              width={blobSize}
+              height={blobSize}
               fill={'pink'}
             />
           )
