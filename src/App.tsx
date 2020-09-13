@@ -12,20 +12,30 @@ const BlobContainer = styled.div`
   align-items: center;
 `;
 
-const BLOB_COUNT = 100000;
+const BLOB_COUNT = 10;
+const BLOB_SIZE = 8;
 
 function App() {
   return (
     <BlobContainer>
       {Array.from(Array(BLOB_COUNT)).map((_, i) => {
+        const seed = Math.random();
         const svgPath = blobs.svgPath({
-          seed: Math.random(),
+          seed,
           extraPoints: 8,
           randomness: 4,
-          size: 32,
+          size: BLOB_SIZE,
         });
 
-        return <Blob height={32} width={32} path={svgPath} fill="#FF0066" />;
+        return (
+          <Blob
+            height={BLOB_SIZE}
+            width={BLOB_SIZE}
+            path={svgPath}
+            fill="#FF0066"
+            key={seed + i}
+          />
+        );
       })}
     </BlobContainer>
   );
