@@ -6,9 +6,6 @@ import { pathArray } from './worker';
 import { Blob } from './Blob';
 import logo from './react.svg';
 
-const BLOB_SIZE = 32;
-const BLOB_COUNT = 100;
-
 const BlobContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -17,54 +14,119 @@ const BlobContainer = styled.div`
 `;
 
 function App() {
-  const [blobCount, setBlobCount] = useState(1000);
-  const [blobSize, setBlobSize] = useState(16);
+  const [blobCount, setBlobCount] = useState(500);
+  const [blobSize, setBlobSize] = useState(32);
   const [blobPaths, setBlobPaths] = useState<string[]>([]);
   const [
     blobWorker,
     { status: blobWorkerStatus, kill: killBlobWorker },
   ] = useWorker(pathArray, {
     remoteDependencies: ['https://unpkg.com/blobs/v2'],
+    autoTerminate: false,
+  });
+  const [
+    blobWorker2,
+    { status: blobWorker2Status, kill: killBlobWorker2 },
+  ] = useWorker(pathArray, {
+    remoteDependencies: ['https://unpkg.com/blobs/v2'],
+    autoTerminate: false,
   });
 
   useEffect(() => {
     async function runBlobCreation() {
       try {
-        console.log('Start.');
-
+        console.log('blobWorkerStatus', blobWorkerStatus);
         const result: string[] = await blobWorker(blobSize, blobCount); // non-blocking UI
-        console.log('End.', result);
+        console.log('blobWorkerStatus', blobWorkerStatus);
 
         setBlobPaths(result);
-        setBlobCount(50000);
-        setBlobSize(8);
+        killBlobWorker();
       } catch (e) {
         console.log('error', e);
       }
     }
 
-    // if (blobWorkerStatus === WORKER_STATUS.PENDING) {
-    runBlobCreation();
-    // }
-  }, [blobCount, blobSize, blobWorkerStatus, blobWorker]);
+    if (
+      blobWorkerStatus === WORKER_STATUS.PENDING ||
+      blobWorkerStatus === WORKER_STATUS.SUCCESS
+    ) {
+      runBlobCreation();
+    }
+  }, [
+    blobCount,
+    blobSize,
+    blobWorker2Status,
+    blobWorker,
+    blobWorkerStatus,
+    killBlobWorker,
+  ]);
+
+  useEffect(() => {
+    async function runBlobCreation() {
+      try {
+        console.log('blobWorker2Status', blobWorker2Status);
+
+        const result: string[] = await blobWorker2(blobSize, blobCount); // non-blocking UI
+        console.log('blobWorker2Status', blobWorker2Status);
+
+        setBlobPaths(result);
+
+        killBlobWorker2();
+      } catch (e) {
+        console.log('error', e);
+      }
+    }
+
+    if (
+      blobWorker2Status === WORKER_STATUS.PENDING ||
+      blobWorker2Status === WORKER_STATUS.SUCCESS
+    ) {
+      runBlobCreation();
+    }
+  }, [
+    blobCount,
+    blobSize,
+    blobWorkerStatus,
+    blobWorker2,
+    blobWorker2Status,
+    killBlobWorker2,
+  ]);
+
+  useEffect(() => {
+    console.log('blobSize', blobSize, 'blobCount', blobCount);
+    console.log(
+      'blobWorkerStatus',
+      blobWorkerStatus,
+      'blobWorker2Status',
+      blobWorker2Status
+    );
+  }, [blobSize, blobCount]);
+
+  useEffect(() => {
+    if (blobCount <= 15000) {
+      setBlobSize((prev) => prev);
+      setBlobCount((prev) => prev * 2);
+    }
+  }, [blobPaths, blobCount]);
 
   return (
     <BlobContainer>
       <img src={logo} className="App-logo" alt="logo" />
       <button>Click Me</button>
       {blobWorkerStatus}
-      {blobWorkerStatus === WORKER_STATUS.SUCCESS &&
-        blobPaths.map(
-          (path: string, index: number): JSX.Element => (
-            <Blob
-              key={index}
-              path={path}
-              width={blobSize}
-              height={blobSize}
-              fill={'pink'}
-            />
-          )
-        )}
+      {blobWorker2Status}
+
+      {blobPaths.map(
+        (path: string, index: number): JSX.Element => (
+          <Blob
+            key={index}
+            path={path}
+            width={blobSize}
+            height={blobSize}
+            fill={'pink'}
+          />
+        )
+      )}
     </BlobContainer>
   );
 }
