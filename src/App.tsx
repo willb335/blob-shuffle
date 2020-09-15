@@ -9,7 +9,7 @@ import logo from './react.svg';
 const BlobContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  max-width: 100vw;
+  width: 100vw;
   align-items: center;
 `;
 

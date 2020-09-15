@@ -19,7 +19,6 @@ html {
 .App-logo {
   height: 40vmin;
   pointer-events: none;
-  border: 2px solid red;
   animation-name: spin;
   animation-duration: 5000ms;
   animation-iteration-count: infinite;
