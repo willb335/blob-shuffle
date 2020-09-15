@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useWorker, WORKER_STATUS } from '@koale/useworker';
 
 import { pathArray } from './worker';
-import { Blob } from './Blob';
+import { Blob, BlobProps } from './Blob';
 import logo from './react.svg';
 
 const BlobContainer = styled.div`
@@ -23,14 +23,6 @@ const Container = styled.div`
   height: 100vh;
   flex-wrap: wrap;
 `;
-
-interface BlobProps {
-  size: number;
-  children: Blob[];
-  path: string;
-  id: string;
-  fill: string;
-}
 
 function App() {
   const [answer, setAnswer] = useState(10000);
@@ -61,7 +53,7 @@ function App() {
           size: 32,
           children: [],
           path: blobPaths[blobCount],
-          id: blobCount.toString(),
+          id: blobCount,
           fill: 'green',
         },
       ]);
@@ -69,7 +61,7 @@ function App() {
     }
 
     runBlobCreation();
-  }, [answer, blobWorker]);
+  }, [answer, blobCount, blobWorker]);
 
   const createBlob = (): void => {
     setBlobs((prev) => {
@@ -79,13 +71,34 @@ function App() {
           size: 32,
           children: [],
           path: blobPaths[blobCount],
-          id: blobCount.toString(),
+          id: blobCount,
           fill: 'green',
         },
       ];
     });
     setBlobCount((prev) => prev + 1);
   };
+
+  function splitBlob(e: SyntheticEvent, id: number): void {
+    console.log('splitting', e.target);
+    if (id === 2) {
+      const newBlobs = blobs;
+      newBlobs[2] = {
+        ...newBlobs[2],
+        ...{
+          children: [
+            {
+              size: 16,
+              children: [],
+              path: blobPaths[blobCount],
+              id: blobCount,
+              fill: 'green',
+            },
+          ],
+        },
+      };
+    }
+  }
 
   return (
     <>
@@ -96,8 +109,18 @@ function App() {
       <Container>
         {blobs.map((b, i) => {
           return (
-            <BlobContainer key={b.id} size={b.size}>
-              <Blob {...b} fill={b.id === '3' ? 'red' : b.fill} />
+            <BlobContainer key={b.id.toString()} size={b.size}>
+              <Blob {...b} fill={b.id === i ? 'red' : b.fill} split={splitBlob}>
+                {b.children.length > 0 &&
+                  b.children.map((b2, j) => (
+                    <Blob
+                      {...b2}
+                      key={j.toString()}
+                      fill={'orange'}
+                      split={splitBlob}
+                    />
+                  ))}
+              </Blob>
             </BlobContainer>
           );
         })}
