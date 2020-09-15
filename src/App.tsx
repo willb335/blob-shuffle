@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useWorker, WORKER_STATUS } from '@koale/useworker';
 
 import { pathArray } from './worker';
-import { Blob, BlobProps } from './Blob';
+import { Blobs, BlobsProps } from './Blobs';
 import logo from './react.svg';
 
 const BlobContainer = styled.div`
@@ -28,7 +28,7 @@ const Container = styled.div`
 function App() {
   const [answer, setAnswer] = useState(10000);
   const [blobPaths, setBlobPaths] = useState<string[]>([]);
-  const [blobs, setBlobs] = useState<BlobProps[]>([]);
+  const [blobs, setBlobs] = useState<BlobsProps[]>([]);
   const [blobCount, setBlobCount] = useState(0);
   // const [blobSize, setBlobSize] = useState(32);
   // const [containerTotal, setContainerTotal] = useState(2);
@@ -56,6 +56,7 @@ function App() {
           id: blobCount,
           fill: 'green',
           generation: 1,
+          children: undefined,
         },
       ]);
       setBlobCount((prev) => prev + 1);
@@ -74,6 +75,7 @@ function App() {
           id: blobCount,
           fill: 'green',
           generation: 1,
+          children: undefined,
         },
       ];
     });
@@ -102,14 +104,7 @@ function App() {
           console.log('b', b);
           return (
             <BlobContainer key={b.id.toString()} size={32}>
-              {Array.from(Array(b.generation)).map((_, j) => (
-                <Blob
-                  key={j}
-                  {...b}
-                  fill={b.id === i ? 'red' : b.fill}
-                  split={splitBlob}
-                />
-              ))}
+              <Blobs {...b} children={blobs} />
             </BlobContainer>
           );
         })}

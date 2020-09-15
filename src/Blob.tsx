@@ -16,7 +16,6 @@ export const Blob: FunctionComponent<BlobProps> = ({
   split,
   id,
 }) => {
-  console.log(size);
   return (
     <svg width={size} height={size} onClick={(e) => split && split(e, id)}>
       <path d={path} fill={fill} />
