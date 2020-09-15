@@ -1,20 +1,14 @@
 import React, { FunctionComponent } from 'react';
 
 interface BlobProps {
-  width: number;
-  height: number;
+  size: number;
   path: string;
   fill: string;
 }
 
-export const Blob: FunctionComponent<BlobProps> = ({
-  width,
-  height,
-  path,
-  fill,
-}) => {
+export const Blob: FunctionComponent<BlobProps> = ({ size, path, fill }) => {
   return (
-    <svg width={width} height={height}>
+    <svg width={size} height={size}>
       <path d={path} fill={fill} />
     </svg>
   );

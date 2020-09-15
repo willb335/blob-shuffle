@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { SyntheticEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useWorker, WORKER_STATUS } from '@koale/useworker';
 
@@ -24,10 +24,21 @@ const Container = styled.div`
   flex-wrap: wrap;
 `;
 
+interface Blob {
+  size: number;
+  children: Blob[];
+  path: string;
+  id: string;
+  fill: string;
+}
+
 function App() {
-  const [blobCount, setBlobCount] = useState(10000);
-  const [blobSize, setBlobSize] = useState(32);
+  const [answer, setAnswer] = useState(10000);
   const [blobPaths, setBlobPaths] = useState<string[]>([]);
+  const [blobs, setBlobs] = useState<Blob[]>([]);
+  // const [blobCount, setBlobCount] = useState(2);
+  // const [blobSize, setBlobSize] = useState(32);
+  // const [containerTotal, setContainerTotal] = useState(2);
   const [blobWorker, { status: blobWorkerStatus }] = useWorker(pathArray, {
     remoteDependencies: ['https://unpkg.com/blobs/v2'],
     autoTerminate: false,
@@ -36,33 +47,49 @@ function App() {
   useEffect(() => {
     async function runBlobCreation() {
       try {
-        const result: string[] = await blobWorker(blobSize, blobCount); // non-blocking UI
+        const result: string[] = await blobWorker(32, answer); // non-blocking UI
         setBlobPaths(result);
+        createParentBlob(result);
       } catch (e) {
         console.log('error', e);
       }
     }
 
+    function createParentBlob(blobPaths: string[]): void {
+      setBlobs([
+        {
+          size: 32,
+          children: [],
+          path: blobPaths[0],
+          id: blobPaths[0],
+          fill: 'green',
+        },
+      ]);
+    }
+
     runBlobCreation();
-  }, [blobCount, blobSize, blobWorker]);
+  }, [answer, blobWorker]);
+
+  const split = (e: SyntheticEvent, index: number): void => {
+    console.log('e.target', e.target);
+  };
 
   return (
-    <BlobContainer>
+    <>
       <img src={logo} className="App-logo" alt="logo" />
       <button>Click Me</button>
-      {blobWorkerStatus}
-      {blobPaths.map(
-        (path: string, index: number): JSX.Element => (
-          <Blob
-            key={index}
-            path={path}
-            width={blobSize}
-            height={blobSize}
-            fill={'pink'}
-          />
-        )
-      )}
-    </BlobContainer>
+      <div>{blobWorkerStatus}</div>
+
+      <Container>
+        {blobs.map((b, i) => {
+          return (
+            <BlobContainer key={b.id + i} size={b.size}>
+              <Blob {...b} />
+            </BlobContainer>
+          );
+        })}
+      </Container>
+    </>
   );
 }
 
