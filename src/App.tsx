@@ -9,8 +9,19 @@ import logo from './react.svg';
 const BlobContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  width: 100vw;
+  justify-content: center;
   align-items: center;
+  width: ${({ size }: { size: number }) => size && `${size}px`};
+  height: ${({ size }: { size: number }) => size && `${size}px`};
+`;
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  flex-wrap: wrap;
 `;
 
 function App() {
