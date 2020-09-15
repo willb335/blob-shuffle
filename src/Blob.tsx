@@ -4,7 +4,8 @@ export interface BlobProps {
   size: number;
   path: string;
   fill: string;
-  children: BlobProps[];
+  childrenProps: BlobProps[];
+  children?: JSX.Element[] | JSX.Element;
   split?: Function;
   id: number;
 }
@@ -16,11 +17,11 @@ export const Blob: FunctionComponent<BlobProps> = ({
   children,
   split,
   id,
+  childrenProps,
 }) => {
   return (
     <svg width={size} height={size} onClick={(e) => split && split(e, id)}>
-      {children.length > 0 ? null : <path d={path} fill={fill} />}
-      {children}
+      {childrenProps.length > 0 ? children : <path d={path} fill={fill} />}
     </svg>
   );
 };

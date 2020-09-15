@@ -51,7 +51,7 @@ function App() {
       setBlobs([
         {
           size: 32,
-          children: [],
+          childrenProps: [],
           path: blobPaths[blobCount],
           id: blobCount,
           fill: 'green',
@@ -61,15 +61,15 @@ function App() {
     }
 
     runBlobCreation();
-  }, [answer, blobCount, blobWorker]);
+  }, [answer, blobWorker]);
 
-  const createBlob = (): void => {
+  function createBlob(): void {
     setBlobs((prev) => {
       return [
         ...prev,
         {
           size: 32,
-          children: [],
+          childrenProps: [],
           path: blobPaths[blobCount],
           id: blobCount,
           fill: 'green',
@@ -77,27 +77,51 @@ function App() {
       ];
     });
     setBlobCount((prev) => prev + 1);
-  };
+  }
 
   function splitBlob(e: SyntheticEvent, id: number): void {
     console.log('splitting', e.target);
-    if (id === 2) {
-      const newBlobs = blobs;
-      newBlobs[2] = {
-        ...newBlobs[2],
-        ...{
-          children: [
-            {
-              size: 16,
-              children: [],
-              path: blobPaths[blobCount],
-              id: blobCount,
-              fill: 'green',
-            },
-          ],
-        },
-      };
-    }
+    const newBlobs = blobs;
+    newBlobs[0] = {
+      ...newBlobs[0],
+      ...{
+        childrenProps: [
+          {
+            size: 8,
+            childrenProps: [],
+            path: blobPaths[blobCount],
+            id: blobCount,
+            fill: 'green',
+          },
+          {
+            size: 8,
+            childrenProps: [],
+            path: blobPaths[blobCount],
+            id: blobCount,
+            fill: 'green',
+          },
+          {
+            size: 8,
+            childrenProps: [],
+            path: blobPaths[blobCount],
+            id: blobCount,
+            fill: 'green',
+          },
+          {
+            size: 8,
+            childrenProps: [],
+            path: blobPaths[blobCount],
+            id: blobCount,
+            fill: 'green',
+          },
+        ],
+      },
+    };
+
+    setBlobs(newBlobs);
+    setBlobCount((prev) => prev + 1);
+
+    console.log('blobs', blobs);
   }
 
   return (
@@ -108,18 +132,18 @@ function App() {
 
       <Container>
         {blobs.map((b, i) => {
+          console.log('b', b);
           return (
-            <BlobContainer key={b.id.toString()} size={b.size}>
+            <BlobContainer key={b.id.toString()} size={32}>
               <Blob {...b} fill={b.id === i ? 'red' : b.fill} split={splitBlob}>
-                {b.children.length > 0 &&
-                  b.children.map((b2, j) => (
-                    <Blob
-                      {...b2}
-                      key={j.toString()}
-                      fill={'orange'}
-                      split={splitBlob}
-                    />
-                  ))}
+                {b.childrenProps.map((b2, j) => (
+                  <Blob
+                    {...b2}
+                    key={j.toString()}
+                    fill={'orange'}
+                    split={splitBlob}
+                  />
+                ))}
               </Blob>
             </BlobContainer>
           );
