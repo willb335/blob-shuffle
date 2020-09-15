@@ -16,6 +16,7 @@ export const Blobs: FunctionComponent<BlobsProps> = ({
   fill,
   split,
   id,
+  generation,
   children,
 }) => {
   return (
@@ -24,8 +25,15 @@ export const Blobs: FunctionComponent<BlobsProps> = ({
         children.map((blob, i) => {
           return (
             <React.Fragment key={blob.id + blob.generation}>
-              <path d={path} fill={fill} />{' '}
-              {blob.children && <Blobs {...blob} children={blob.children} />}
+              {blob.children ? (
+                <Blobs
+                  {...blob}
+                  // size={blob.size / (blob.generation * 2)}
+                  children={blob.children}
+                />
+              ) : (
+                <path d={path} fill={fill} />
+              )}
             </React.Fragment>
           );
         })}

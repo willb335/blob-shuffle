@@ -52,8 +52,8 @@ function App() {
       setBlobs([
         {
           size: 32,
-          path: blobPaths[blobCount],
-          id: blobCount,
+          path: blobPaths[0],
+          id: 0,
           fill: 'green',
           generation: 1,
           children: undefined,
@@ -84,7 +84,21 @@ function App() {
 
   function splitBlob(e: SyntheticEvent, id: number): void {
     const newBlobs = blobs;
-    newBlobs[id] = { ...newBlobs[id], ...{ generation: 4, size: 16 } };
+    newBlobs[id] = {
+      ...newBlobs[id],
+      ...{
+        children: [
+          {
+            generation: newBlobs[id].generation + 1,
+            size: newBlobs[id].size / 2,
+            path: blobPaths[blobCount],
+            id: blobCount,
+            fill: 'orange',
+            children: undefined,
+          },
+        ],
+      },
+    };
 
     setBlobs(newBlobs);
 
@@ -100,14 +114,14 @@ function App() {
       <div>{blobWorkerStatus}</div>
 
       <Container>
-        {blobs.map((b, i) => {
+        {/* {blobs.map((b, i) => {
           console.log('b', b);
           return (
-            <BlobContainer key={b.id.toString()} size={32}>
-              <Blobs {...b} children={blobs} />
-            </BlobContainer>
+            <BlobContainer key={b.id.toString()} size={32}> */}
+        <Blobs {...blobs[0]} split={splitBlob} children={blobs} />
+        {/* </BlobContainer>
           );
-        })}
+        })} */}
       </Container>
     </>
   );
