@@ -13,6 +13,7 @@ const BlobContainer = styled.div`
   align-items: center;
   width: ${({ size }: { size: number }) => size && `${size}px`};
   height: ${({ size }: { size: number }) => size && `${size}px`};
+  border: 2px solid red;
 `;
 
 const Container = styled.div`
@@ -80,7 +81,12 @@ function App() {
   }
 
   function splitBlob(e: SyntheticEvent, id: number): void {
-    setBlobCount((prev) => prev + 1);
+    const newBlobs = blobs;
+    newBlobs[id] = { ...newBlobs[id], ...{ generation: 4, size: 16 } };
+
+    setBlobs(newBlobs);
+
+    setBlobCount((prev) => prev + 3);
 
     console.log('blobs', blobs);
   }
@@ -98,7 +104,7 @@ function App() {
             <BlobContainer key={b.id.toString()} size={32}>
               {Array.from(Array(b.generation)).map((_, j) => (
                 <Blob
-                  key={b.id.toString()}
+                  key={j}
                   {...b}
                   fill={b.id === i ? 'red' : b.fill}
                   split={splitBlob}
