@@ -24,7 +24,7 @@ const Container = styled.div`
   flex-wrap: wrap;
 `;
 
-interface Blob {
+interface BlobProps {
   size: number;
   children: Blob[];
   path: string;
@@ -35,8 +35,8 @@ interface Blob {
 function App() {
   const [answer, setAnswer] = useState(10000);
   const [blobPaths, setBlobPaths] = useState<string[]>([]);
-  const [blobs, setBlobs] = useState<Blob[]>([]);
-  // const [blobCount, setBlobCount] = useState(2);
+  const [blobs, setBlobs] = useState<BlobProps[]>([]);
+  const [blobCount, setBlobCount] = useState(0);
   // const [blobSize, setBlobSize] = useState(32);
   // const [containerTotal, setContainerTotal] = useState(2);
   const [blobWorker, { status: blobWorkerStatus }] = useWorker(pathArray, {
@@ -60,31 +60,44 @@ function App() {
         {
           size: 32,
           children: [],
-          path: blobPaths[0],
-          id: blobPaths[0],
+          path: blobPaths[blobCount],
+          id: blobCount.toString(),
           fill: 'green',
         },
       ]);
+      setBlobCount((prev) => prev + 1);
     }
 
     runBlobCreation();
   }, [answer, blobWorker]);
 
-  const split = (e: SyntheticEvent, index: number): void => {
-    console.log('e.target', e.target);
+  const createBlob = (): void => {
+    setBlobs((prev) => {
+      return [
+        ...prev,
+        {
+          size: 32,
+          children: [],
+          path: blobPaths[blobCount],
+          id: blobCount.toString(),
+          fill: 'green',
+        },
+      ];
+    });
+    setBlobCount((prev) => prev + 1);
   };
 
   return (
     <>
       <img src={logo} className="App-logo" alt="logo" />
-      <button>Click Me</button>
+      <button onClick={createBlob}>Click Me</button>
       <div>{blobWorkerStatus}</div>
 
       <Container>
         {blobs.map((b, i) => {
           return (
-            <BlobContainer key={b.id + i} size={b.size}>
-              <Blob {...b} />
+            <BlobContainer key={b.id} size={b.size}>
+              <Blob {...b} fill={b.id === '3' ? 'red' : b.fill} />
             </BlobContainer>
           );
         })}
