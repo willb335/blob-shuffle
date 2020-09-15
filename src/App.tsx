@@ -83,6 +83,7 @@ function App() {
   }
 
   function splitBlob(e: SyntheticEvent, id: number): void {
+    console.log('id', id);
     const newBlobs = blobs;
     newBlobs[id] = {
       ...newBlobs[id],
@@ -96,6 +97,14 @@ function App() {
             fill: 'orange',
             children: undefined,
           },
+          {
+            generation: newBlobs[id].generation + 1,
+            size: newBlobs[id].size / 2,
+            path: blobPaths[blobCount],
+            id: blobCount + 1,
+            fill: 'red',
+            children: undefined,
+          },
         ],
       },
     };
@@ -106,6 +115,8 @@ function App() {
 
     console.log('blobs', blobs);
   }
+
+  useEffect(() => console.log('child', blobs[0]?.children), [blobs, blobCount]);
 
   return (
     <>
@@ -118,7 +129,7 @@ function App() {
           console.log('b', b);
           return (
             <BlobContainer key={b.id.toString()} size={32}> */}
-        <Blobs {...blobs[0]} split={splitBlob} children={blobs} />
+        <Blobs {...blobs[0]} split={splitBlob} children={blobs[0]?.children} />
         {/* </BlobContainer>
           );
         })} */}

@@ -19,24 +19,26 @@ export const Blobs: FunctionComponent<BlobsProps> = ({
   generation,
   children,
 }) => {
+  console.log('gen', generation);
   return (
     <svg width={size} height={size} onClick={(e) => split && split(e, id)}>
-      {children &&
+      {children?.length ? (
         children.map((blob, i) => {
+          console.log('im here', blob.size);
+          console.log(blob.generation);
           return (
             <React.Fragment key={blob.id + blob.generation}>
-              {blob.children ? (
-                <Blobs
-                  {...blob}
-                  // size={blob.size / (blob.generation * 2)}
-                  children={blob.children}
-                />
-              ) : (
-                <path d={path} fill={fill} />
-              )}
+              {/* {blob.children?.length ? ( */}
+              <Blobs {...blob} children={blob.children} />
+              {/* ) : (
+                <path d={blob.path} fill={blob.fill} />
+              )} */}
             </React.Fragment>
           );
-        })}
+        })
+      ) : (
+        <path d={path} fill={fill} />
+      )}
     </svg>
   );
 };
