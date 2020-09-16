@@ -12,17 +12,18 @@ const BlobContainer = styled.div`
   align-items: center;
   width: ${({ size }: { size: number }) => size && `${size}px`};
   height: ${({ size }: { size: number }) => size && `${size}px`};
-  /* border: 2px solid red; */
+  /* outline: 2px solid red; */
 `;
 
 const Container = styled.div`
   display: flex;
   justify-content: center;
+  flex-flow: row-reverse;
   align-items: center;
   width: 100vw;
   height: 100vh;
   flex-wrap: wrap;
-  border: 2px solid red;
+  outline: 2px solid blue;
 `;
 
 function App() {
@@ -114,12 +115,32 @@ function App() {
         {recentBlob && <Blob {...recentBlob} />}
       </BlobContainer>
       <Container>
+        {/* {Array.from(Array(1000)).map((_, i) => {
+          return (
+            <BlobContainer
+              key={i.toString()}
+              size={32}
+              onClick={() => createBlob(i)}
+            >
+              <Blob {...blobs[i]} index={i} />
+            </BlobContainer>
+          );
+        })} */}
         {blobs.map((blob, i) => {
           return (
             <BlobContainer
               key={blob.id}
+              tabIndex={0}
               size={blob.size}
               onClick={() => splitBlob(i)}
+              onKeyPress={(e) => {
+                console.log('e.key', e.target);
+
+                if (e.key === ' ') {
+                  console.log('e.key', e.key);
+                  splitBlob(i);
+                }
+              }}
             >
               <Blob {...blob} index={i} />
             </BlobContainer>
