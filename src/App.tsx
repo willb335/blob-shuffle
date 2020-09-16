@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import * as blob from 'blobs/v2';
 
@@ -33,7 +33,6 @@ function App() {
 
   useEffect(() => {
     createBlob(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function createBlob(index: number): void {
@@ -64,15 +63,13 @@ function App() {
     setRecentBlob(currentBlob);
   }
 
-  function splitBlob(b: BlobProps): void {
-    const newBlobs = blobs;
-    const size = b.children
-      ? b.children[b.index].size / 2
-      : newBlobs[b.index].size / 2;
-    const generation = b.children
-      ? b.children[b.index].generation + 1
-      : newBlobs[b.index].generation + 1;
-    const splitCount = Math.pow(b.generation === 1 ? 2 : generation, 2);
+  function splitBlob(i: number): void {
+    let newBlobs = blobs;
+    let generation = newBlobs[i].generation + 1;
+    let size = newBlobs[i].size / generation;
+    let splitCount = Math.pow(generation, 2);
+
+    console.log('gen', generation);
 
     const createChildren = (index: number): BlobProps[] => {
       return Array.from(Array(splitCount)).map((_, i) => {
@@ -92,21 +89,21 @@ function App() {
           id: `${i}-${generation}`,
           fill: 'orange',
           children: undefined,
-          index: i,
-          parent: `${index}-${blobs[index].generation}`,
+          index,
         };
       });
     };
 
-    newBlobs[b.index] = {
-      ...newBlobs[b.index],
+    newBlobs[i] = {
+      ...newBlobs[i],
       ...{
-        children: createChildren(b.index),
+        generation,
+        children: createChildren(i),
       },
     };
 
     setBlobs(newBlobs);
-    setRecentBlob(newBlobs[b.index]);
+    setRecentBlob(newBlobs[i]);
   }
 
   return (
@@ -118,10 +115,13 @@ function App() {
       </BlobContainer>
       <Container>
         {blobs.map((blob, i) => {
-          console.log('updating', i);
           return (
-            <BlobContainer key={blob.id} size={blob.size}>
-              <Blob {...blob} split={splitBlob} index={i} />
+            <BlobContainer
+              key={blob.id}
+              size={blob.size}
+              onClick={() => splitBlob(i)}
+            >
+              <Blob {...blob} index={i} />
             </BlobContainer>
           );
         })}

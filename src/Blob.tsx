@@ -1,16 +1,14 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 
 export interface BlobProps {
   size: number;
   path: string;
   fill: string;
-  split?: Function;
   id: string;
   generation: number;
   children: BlobProps[] | undefined;
   index: number;
-  parent: string | undefined;
 }
 
 const BlobContainer = styled.div`
@@ -30,18 +28,14 @@ export const Blob: FunctionComponent<BlobProps> = (props) => {
         console.log('creating children', i);
         return (
           <BlobContainer key={blob.id} size={blob.size}>
-            <Blob {...blob} index={i} split={props.split} />
+            <Blob {...blob} index={props.index} />
           </BlobContainer>
         );
       })}
     </>
   ) : (
     <svg width={props.size} height={props.size}>
-      <path
-        d={props.path}
-        fill={props.fill}
-        onClick={() => props.split && props.split(props)}
-      />
+      <path d={props.path} fill={props.fill} />
     </svg>
   );
 };
