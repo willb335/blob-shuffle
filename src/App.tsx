@@ -2,7 +2,7 @@ import React, { SyntheticEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import * as blob from 'blobs/v2';
 
-import { Blob, BlobProps } from './Blobs';
+import { Blob, BlobProps } from './Blob';
 import logo from './react.svg';
 
 const BlobContainer = styled.div`
@@ -12,7 +12,7 @@ const BlobContainer = styled.div`
   align-items: center;
   width: ${({ size }: { size: number }) => size && `${size}px`};
   height: ${({ size }: { size: number }) => size && `${size}px`};
-  border: 2px solid red;
+  /* border: 2px solid red; */
 `;
 
 const Container = styled.div`
@@ -22,6 +22,7 @@ const Container = styled.div`
   width: 100vw;
   height: 100vh;
   flex-wrap: wrap;
+  border: 2px solid red;
 `;
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
 
   useEffect(() => {
     createBlob(blobCount);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function createBlob(index: number): void {
@@ -52,51 +54,62 @@ function App() {
         {
           size,
           path,
-          id: index + generation,
+          id: `${index}-${generation}`,
           fill: 'green',
           generation: 1,
           children: undefined,
+          index,
         },
       ];
     });
     setBlobCount((prev) => prev + 1);
   }
 
-  // function splitBlob(e: SyntheticEvent, id: number): void {
-  //   console.log('id', id);
-  //   const newBlobs = blobs;
-  //   newBlobs[id] = {
-  //     ...newBlobs[id],
-  //     ...{
-  //       children: [
-  //         {
-  //           generation: newBlobs[id].generation + 1,
-  //           size: newBlobs[id].size / 2,
-  //           path: blobPaths[blobCount],
-  //           id: blobCount,
-  //           fill: 'orange',
-  //           children: undefined,
-  //         },
-  //         {
-  //           generation: newBlobs[id].generation + 1,
-  //           size: newBlobs[id].size / 2,
-  //           path: blobPaths[blobCount],
-  //           id: blobCount + 1,
-  //           fill: 'red',
-  //           children: undefined,
-  //         },
-  //       ],
-  //     },
-  //   };
+  function splitBlob(index: number): void {
+    console.log('count', index);
+    const newBlobs = blobs;
+    const seed = Math.random();
+    const size = newBlobs[index].size / 2;
+    const generation = newBlobs[index].generation + 1;
+    const path = blob.svgPath({
+      seed,
+      extraPoints: 8,
+      randomness: 4,
+      size,
+    });
 
-  //   setBlobs(newBlobs);
+    newBlobs[index] = {
+      ...newBlobs[index],
+      ...{
+        children: [
+          {
+            generation,
+            size,
+            path,
+            id: `${0}-${generation}`,
+            fill: 'orange',
+            children: undefined,
+            index,
+          },
+          {
+            generation,
+            size,
+            path,
+            id: `${1}-${generation}`,
+            fill: 'red',
+            children: undefined,
+            index,
+          },
+        ],
+      },
+    };
 
-  //   setBlobCount((prev) => prev + 3);
+    setBlobs(newBlobs);
 
-  //   console.log('blobs', blobs);
-  // }
+    setBlobCount((prev) => prev + 3);
 
-  useEffect(() => console.log('child', blobs[0]?.children), [blobs, blobCount]);
+    console.log('blobs', blobs);
+  }
 
   return (
     <>
@@ -104,8 +117,8 @@ function App() {
       <button onClick={() => createBlob(blobCount)}>Click Me</button>
       <Container>
         {blobs.map((blob, i) => (
-          <BlobContainer size={blob.size}>
-            <Blob {...blob} children={blob.children} />
+          <BlobContainer key={blob.id} size={blob.size}>
+            <Blob {...blob} split={splitBlob} index={i} />
           </BlobContainer>
         ))}
       </Container>
