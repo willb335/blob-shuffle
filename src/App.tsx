@@ -55,6 +55,7 @@ function App() {
       generation: 1,
       children: undefined,
       index,
+      parent: undefined,
     };
 
     setBlobs((prev) => {
@@ -63,24 +64,28 @@ function App() {
     setRecentBlob(currentBlob);
   }
 
-  function splitBlob(index: number): void {
-    console.log('splitting', index);
+  function splitBlob(b: BlobProps): void {
     const newBlobs = blobs;
-    const seed = Math.random();
-    const size = newBlobs[index].size / 2;
-    const generation = newBlobs[index].generation + 1;
-    const splitCount = Math.pow(generation === 1 ? 2 : generation, 2);
-    const path = blob.svgPath({
-      seed,
-      extraPoints: 8,
-      randomness: 4,
-      size,
-    });
+    const size = b.children
+      ? b.children[b.index].size / 2
+      : newBlobs[b.index].size / 2;
+    const generation = b.children
+      ? b.children[b.index].generation + 1
+      : newBlobs[b.index].generation + 1;
+    const splitCount = Math.pow(b.generation === 1 ? 2 : generation, 2);
 
-    newBlobs[index] = {
-      ...newBlobs[index],
-      ...{
-        children: Array.from(Array(4)).map((_, i) => ({
+    const createChildren = (index: number): BlobProps[] => {
+      return Array.from(Array(splitCount)).map((_, i) => {
+        const seed = Math.random();
+
+        const path = blob.svgPath({
+          seed,
+          extraPoints: 8,
+          randomness: 4,
+          size,
+        });
+
+        return {
           generation,
           size,
           path,
@@ -88,14 +93,20 @@ function App() {
           fill: 'orange',
           children: undefined,
           index: i,
-        })),
+          parent: `${index}-${blobs[index].generation}`,
+        };
+      });
+    };
+
+    newBlobs[b.index] = {
+      ...newBlobs[b.index],
+      ...{
+        children: createChildren(b.index),
       },
     };
 
-    console.log('newBlobs', newBlobs);
-
     setBlobs(newBlobs);
-    setRecentBlob(newBlobs[index]);
+    setRecentBlob(newBlobs[b.index]);
   }
 
   return (

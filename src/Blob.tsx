@@ -10,6 +10,7 @@ export interface BlobProps {
   generation: number;
   children: BlobProps[] | undefined;
   index: number;
+  parent: string | undefined;
 }
 
 const BlobContainer = styled.div`
@@ -22,31 +23,25 @@ const BlobContainer = styled.div`
   /* border: 2px solid orange; */
 `;
 
-export const Blob: FunctionComponent<BlobProps> = ({
-  size,
-  path,
-  fill,
-  split,
-  id,
-  generation,
-  children,
-  index,
-}) => {
-  useEffect(() => console.log('children', children), [children]);
-  return children ? (
+export const Blob: FunctionComponent<BlobProps> = (props) => {
+  return props.children ? (
     <>
-      {children.map((blob, i) => {
-        console.log('creating children', blob);
+      {props.children.map((blob, i) => {
+        console.log('creating children', i);
         return (
           <BlobContainer key={blob.id} size={blob.size}>
-            <Blob {...blob} index={i} split={split} />
+            <Blob {...blob} index={i} split={props.split} />
           </BlobContainer>
         );
       })}
     </>
   ) : (
-    <svg width={size} height={size}>
-      <path d={path} fill={fill} onClick={() => split && split(index)} />
+    <svg width={props.size} height={props.size}>
+      <path
+        d={props.path}
+        fill={props.fill}
+        onClick={() => props.split && props.split(props)}
+      />
     </svg>
   );
 };
