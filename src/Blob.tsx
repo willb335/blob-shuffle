@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import styled from 'styled-components';
 
 export interface BlobProps {
@@ -32,11 +32,11 @@ export const Blob: FunctionComponent<BlobProps> = ({
   children,
   index,
 }) => {
-  console.log('blob', id, generation);
-  return children?.length ? (
+  useEffect(() => console.log('children', children), [children]);
+  return children ? (
     <>
       {children.map((blob, i) => {
-        console.log(blob);
+        console.log('creating children', blob);
         return (
           <BlobContainer key={blob.id} size={blob.size}>
             <Blob {...blob} index={i} split={split} />

@@ -26,14 +26,13 @@ const Container = styled.div`
 `;
 
 function App() {
-  const [answer, setAnswer] = useState(10000);
   const [blobs, setBlobs] = useState<BlobProps[]>([]);
-  const [blobCount, setBlobCount] = useState(0);
-  // const [blobSize, setBlobSize] = useState(32);
-  // const [containerTotal, setContainerTotal] = useState(2);
+  const [recentBlob, setRecentBlob] = useState<BlobProps | undefined>(
+    undefined
+  );
 
   useEffect(() => {
-    createBlob(blobCount);
+    createBlob(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -48,29 +47,29 @@ function App() {
       size,
     });
 
+    const currentBlob = {
+      size,
+      path,
+      id: `${index}-${generation}`,
+      fill: 'green',
+      generation: 1,
+      children: undefined,
+      index,
+    };
+
     setBlobs((prev) => {
-      return [
-        ...prev,
-        {
-          size,
-          path,
-          id: `${index}-${generation}`,
-          fill: 'green',
-          generation: 1,
-          children: undefined,
-          index,
-        },
-      ];
+      return [...prev, currentBlob];
     });
-    setBlobCount((prev) => prev + 1);
+    setRecentBlob(currentBlob);
   }
 
   function splitBlob(index: number): void {
-    console.log('count', index);
+    console.log('splitting', index);
     const newBlobs = blobs;
     const seed = Math.random();
     const size = newBlobs[index].size / 2;
     const generation = newBlobs[index].generation + 1;
+    const splitCount = Math.pow(generation === 1 ? 2 : generation, 2);
     const path = blob.svgPath({
       seed,
       extraPoints: 8,
@@ -81,46 +80,40 @@ function App() {
     newBlobs[index] = {
       ...newBlobs[index],
       ...{
-        children: [
-          {
-            generation,
-            size,
-            path,
-            id: `${0}-${generation}`,
-            fill: 'orange',
-            children: undefined,
-            index,
-          },
-          {
-            generation,
-            size,
-            path,
-            id: `${1}-${generation}`,
-            fill: 'red',
-            children: undefined,
-            index,
-          },
-        ],
+        children: Array.from(Array(4)).map((_, i) => ({
+          generation,
+          size,
+          path,
+          id: `${i}-${generation}`,
+          fill: 'orange',
+          children: undefined,
+          index: i,
+        })),
       },
     };
 
+    console.log('newBlobs', newBlobs);
+
     setBlobs(newBlobs);
-
-    setBlobCount((prev) => prev + 3);
-
-    console.log('blobs', blobs);
+    setRecentBlob(newBlobs[index]);
   }
 
   return (
     <>
       <img src={logo} className="App-logo" alt="logo" />
-      <button onClick={() => createBlob(blobCount)}>Click Me</button>
+      <button onClick={() => createBlob(blobs.length)}>Click Me</button>
+      <BlobContainer size={32}>
+        {recentBlob && <Blob {...recentBlob} />}
+      </BlobContainer>
       <Container>
-        {blobs.map((blob, i) => (
-          <BlobContainer key={blob.id} size={blob.size}>
-            <Blob {...blob} split={splitBlob} index={i} />
-          </BlobContainer>
-        ))}
+        {blobs.map((blob, i) => {
+          console.log('updating', i);
+          return (
+            <BlobContainer key={blob.id} size={blob.size}>
+              <Blob {...blob} split={splitBlob} index={i} />
+            </BlobContainer>
+          );
+        })}
       </Container>
     </>
   );
