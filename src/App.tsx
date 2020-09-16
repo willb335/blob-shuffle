@@ -17,17 +17,16 @@ const BlobContainer = styled.div`
 
 const Container = styled.div`
   display: flex;
-  justify-content: center;
-  flex-flow: row-reverse;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
   width: 100vw;
-  height: 100vh;
   flex-wrap: wrap;
   outline: 2px solid blue;
 `;
 
 function App() {
   const [blobs, setBlobs] = useState<BlobProps[]>([]);
+  const [count, setCount] = useState(0);
   const [recentBlob, setRecentBlob] = useState<BlobProps | undefined>(
     undefined
   );
@@ -51,17 +50,17 @@ function App() {
       size,
       path,
       id: `${index}-${generation}`,
-      fill: 'green',
+      fill: index === 0 ? 'red' : 'green',
       generation: 1,
       children: undefined,
       index,
-      parent: undefined,
     };
 
     setBlobs((prev) => {
       return [...prev, currentBlob];
     });
     setRecentBlob(currentBlob);
+    setCount((prev) => prev + 1);
   }
 
   function splitBlob(i: number): void {
@@ -105,11 +104,15 @@ function App() {
 
     setBlobs(newBlobs);
     setRecentBlob(newBlobs[i]);
+    setCount(
+      (prev) => prev + (Math.pow(generation, 2) - Math.pow(generation - 1, 2))
+    );
   }
 
   return (
     <>
       <img src={logo} className="App-logo" alt="logo" />
+      <div>Count: {count}</div>
       <button onClick={() => createBlob(blobs.length)}>Click Me</button>
       <BlobContainer size={32}>
         {recentBlob && <Blob {...recentBlob} />}
@@ -139,6 +142,11 @@ function App() {
                 if (e.key === ' ') {
                   console.log('e.key', e.key);
                   splitBlob(i);
+                }
+
+                if (e.key === 'Enter') {
+                  console.log('e.key', e.key);
+                  createBlob(blobs.length);
                 }
               }}
             >

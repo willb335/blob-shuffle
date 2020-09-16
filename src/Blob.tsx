@@ -25,7 +25,6 @@ export const Blob: FunctionComponent<BlobProps> = (props) => {
   return props.children ? (
     <>
       {props.children.map((blob, i) => {
-        console.log('creating children', i);
         return (
           <BlobContainer key={blob.id} size={blob.size}>
             <Blob {...blob} index={props.index} />
@@ -36,6 +35,19 @@ export const Blob: FunctionComponent<BlobProps> = (props) => {
   ) : (
     <svg width={props.size} height={props.size}>
       <path d={props.path} fill={props.fill} />
+      <text
+        x="50%"
+        y="50%"
+        textAnchor="middle"
+        style={{
+          fontFamily: 'fantasy',
+          fill: 'white',
+          stroke: 'white',
+          fontSize: props.size / 4,
+        }}
+      >
+        Will
+      </text>
     </svg>
   );
 };
