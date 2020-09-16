@@ -1,27 +1,27 @@
 import React, { FunctionComponent } from 'react';
 
-export interface BlobsProps {
+export interface BlobProps {
   size: number;
   path: string;
   fill: string;
-  split?: Function;
+  // split?: Function;
   id: number;
   generation: number;
-  children: BlobsProps[] | undefined;
+  children: BlobProps[] | undefined;
 }
 
-export const Blobs: FunctionComponent<BlobsProps> = ({
+export const Blob: FunctionComponent<BlobProps> = ({
   size,
   path,
   fill,
-  split,
+  // split,
   id,
   generation,
   children,
 }) => {
   console.log('gen', generation);
   return (
-    <svg width={size} height={size} onClick={(e) => split && split(e, id)}>
+    <svg width={size} height={size}>
       {children?.length ? (
         children.map((blob, i) => {
           console.log('im here', blob.size);
@@ -29,7 +29,7 @@ export const Blobs: FunctionComponent<BlobsProps> = ({
           return (
             <React.Fragment key={blob.id + blob.generation}>
               {/* {blob.children?.length ? ( */}
-              <Blobs {...blob} children={blob.children} />
+              <Blob {...blob} children={blob.children} />
               {/* ) : (
                 <path d={blob.path} fill={blob.fill} />
               )} */}
