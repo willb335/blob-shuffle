@@ -16,6 +16,24 @@ html {
   -webkit-text-size-adjust: 100%; /* 2 */
 }
 
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
+}
+
+#root {
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  background: #f0f0f0;
+  padding: 15px;
+}
+
 /* Sections
    ========================================================================== */
 
