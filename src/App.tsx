@@ -11,8 +11,7 @@ export const BlobContainer = styled.div<{ size: number }>`
   align-items: center;
   width: ${({ size }) => size && `${size}px`};
   height: ${({ size }) => size && `${size}px`};
-  margin: 20px;
-  outline: 1px solid gold;
+  margin: 2px;
 `;
 
 const Container = styled.div`
@@ -20,51 +19,36 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  max-width: 100vw;
-  border: 1px solid mistyrose;
+  width: 100vw;
+  height: 100vh;
 `;
 
 function App() {
-  const [size, setSize] = useState(100);
   const [blobs, setBlobs] = useState<BlobProps[]>([]);
-  const [fills] = useState<string[]>(['#D93F4C', '#337FBD', '#228F67']);
-  const [odds] = useState<number[]>([0.25, 0.75]);
 
   useEffect(() => {
-    odds.forEach((odd, i) => createBlob(odd, fills[i]));
+    createBlob(200, 'gold');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function createBlob(odd: number, fill: string): void {
-    const size = (odd: number): number => {
-      return Math.sqrt(odd * 10000);
-    };
-    const createPath = (odd: number): string => {
-      const seed = Math.random();
-      return blob.svgPath({
-        seed,
-        extraPoints: 8,
-        randomness: 4,
-        size: size(odd),
-      });
-    };
+  function createBlob(size: number, fill: string): void {
+    const seed = Math.random();
+    const path = blob.svgPath({
+      seed,
+      extraPoints: 8,
+      randomness: 4,
+      size,
+    });
 
-    if (odd >= 0.5) {
-      setSize(size(odd));
-    }
-
-    setBlobs((prev) => [
-      ...prev,
-      { path: createPath(odd), size: size(odd), fill, odd },
-    ]);
+    setBlobs((prev) => [...prev, { path, size, fill }]);
   }
 
   return (
     <Container>
-      {blobs.map((blob, i) => {
+      {blobs.map((blob) => {
         return (
-          <BlobContainer key={blob.path} tabIndex={0} size={size}>
-            <Blob key={i} {...blob} />
+          <BlobContainer key={blob.path} size={blob.size} tabIndex={0}>
+            <Blob {...blob} />
           </BlobContainer>
         );
       })}

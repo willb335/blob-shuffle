@@ -4,13 +4,12 @@ export interface BlobProps {
   size: number;
   path: string;
   fill: string;
-  odd: number;
 }
 
-export const Blob: FunctionComponent<BlobProps> = (props) => {
+export const Blob: FunctionComponent<BlobProps> = ({ size, path, fill }) => {
   return (
-    <svg width={props.size} height={props.size}>
-      <path d={props.path} fill={props.fill} />
+    <svg width={size} height={size}>
+      <path d={path} fill={fill} />
     </svg>
   );
 };
