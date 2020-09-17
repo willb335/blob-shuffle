@@ -12,6 +12,7 @@ export const BlobContainer = styled.div<{ size: number }>`
   width: ${({ size }) => size && `${size}px`};
   height: ${({ size }) => size && `${size}px`};
   margin: 20px;
+  outline: 1px solid gold;
 `;
 
 const Container = styled.div`
@@ -24,15 +25,19 @@ const Container = styled.div`
 `;
 
 function App() {
+  const [container] = useState(100);
   const [blobs, setBlobs] = useState<BlobProps[]>([]);
   const [fills] = useState<string[]>(['#D93F4C', '#337FBD', '#228F67']);
 
   useEffect(() => {
-    createBlob([0.5, 0.5]);
+    createBlob([0.95, 0.05]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function createBlob(odds: number[]): void {
+    const size = (odd: number): number => {
+      return Math.sqrt(odd * 1000);
+    };
     odds.forEach((odd, i) => {
       const createPath = (odd: number): string => {
         const seed = Math.random();
@@ -40,14 +45,13 @@ function App() {
           seed,
           extraPoints: 8,
           randomness: 4,
-          size: odd * 100,
+          size: size(odd),
         });
       };
 
       const path = createPath(odd);
       const fill = fills[i];
-      const size = odd * 100;
-      setBlobs((prev) => [...prev, { path, size, fill }]);
+      setBlobs((prev) => [...prev, { path, size: size(odd), fill }]);
     });
   }
 
