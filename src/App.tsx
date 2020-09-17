@@ -24,6 +24,15 @@ const Container = styled.div`
   outline: 2px solid blue;
 `;
 
+function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
 function App() {
   const [blobs, setBlobs] = useState<BlobProps[]>([]);
   const [count, setCount] = useState(0);
@@ -50,7 +59,7 @@ function App() {
       size,
       path,
       id: `${index}-${generation}`,
-      fill: index === 0 ? 'red' : 'green',
+      fill: index === 0 ? 'red' : getRandomColor(),
       generation: 1,
       children: undefined,
       index,
@@ -69,8 +78,6 @@ function App() {
     let size = newBlobs[i].size / generation;
     let splitCount = Math.pow(generation, 2);
 
-    console.log('gen', generation);
-
     const createChildren = (index: number): BlobProps[] => {
       return Array.from(Array(splitCount)).map((_, i) => {
         const seed = Math.random();
@@ -87,7 +94,7 @@ function App() {
           size,
           path,
           id: `${i}-${generation}`,
-          fill: 'orange',
+          fill: getRandomColor(),
           children: undefined,
           index,
         };
@@ -135,7 +142,7 @@ function App() {
               key={blob.id}
               tabIndex={0}
               size={blob.size}
-              onClick={() => splitBlob(i)}
+              onClick={() => i !== 0 && splitBlob(i)}
               onKeyPress={(e) => {
                 console.log('e.key', e.target);
 
