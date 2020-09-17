@@ -8,11 +8,11 @@ import logo from './react.svg';
 export const BlobContainer = styled.div<{ size: number }>`
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   width: ${({ size }) => size && `${size}px`};
   height: ${({ size }) => size && `${size}px`};
-  border-radius: 100%;
+  outline: 1px solid blue;
 `;
 
 const Container = styled.div`
@@ -36,13 +36,15 @@ function getRandomColor() {
 function App() {
   const [blobs, setBlobs] = useState<BlobProps[]>([]);
   const [count, setCount] = useState(0);
-  const [size, setSize] = useState(128);
+  const [size, setSize] = useState(2048);
   const [recentBlob, setRecentBlob] = useState<BlobProps | undefined>(
     undefined
   );
 
   useEffect(() => {
-    createBlob(0);
+    Array.from(Array(size)).forEach((_, i) => {
+      createBlob(i);
+    });
   }, []);
 
   function createBlob(index: number): void {
@@ -52,11 +54,12 @@ function App() {
       seed,
       extraPoints: 8,
       randomness: 4,
-      size,
+      // size: Math.floor(Math.sqrt(size)) - Math.floor(Math.sqrt(128)),
+      size: Math.floor(Math.sqrt(8)),
     });
 
     const currentBlob = {
-      size,
+      size: Math.floor(Math.sqrt(8)),
       path,
       id: `${index}-${generation}`,
       fill: index === 0 ? 'red' : getRandomColor(),
@@ -130,18 +133,13 @@ function App() {
         {recentBlob && <Blob {...recentBlob} />}
       </BlobContainer>
       <Container>
-        {/* {Array.from(Array(1000)).map((_, i) => {
-          return (
-            <BlobContainer
-              key={i.toString()}
-              size={32}
-              onClick={() => createBlob(i)}
-            >
-              <Blob {...blobs[i]} index={i} />
-            </BlobContainer>
-          );
-        })} */}
-        {blobs.map((blob, i) => {
+        <BlobContainer tabIndex={0} size={128}>
+          {blobs.map((blob, i) => {
+            return <Blob key={blob.id} {...blob} index={i} />;
+          })}
+        </BlobContainer>
+
+        {/* {blobs.map((blob, i) => {
           return (
             <BlobContainer
               key={blob.id}
@@ -165,7 +163,7 @@ function App() {
               <Blob {...blob} index={i} />
             </BlobContainer>
           );
-        })}
+        })} */}
       </Container>
     </>
   );
