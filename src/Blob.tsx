@@ -4,6 +4,7 @@ export interface BlobProps {
   size: number;
   path: string;
   fill: string;
+  odd: number;
 }
 
 export const Blob: FunctionComponent<BlobProps> = (props) => {

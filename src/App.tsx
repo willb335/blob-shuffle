@@ -7,8 +7,8 @@ import { Blob, BlobProps } from './Blob';
 export const BlobContainer = styled.div<{ size: number }>`
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   width: ${({ size }) => size && `${size}px`};
   height: ${({ size }) => size && `${size}px`};
   margin: 20px;
@@ -21,52 +21,54 @@ const Container = styled.div`
   align-items: center;
   flex-wrap: wrap;
   max-width: 100vw;
-  border: 2px solid green;
+  border: 1px solid mistyrose;
 `;
 
 function App() {
-  const [container] = useState(100);
+  const [size, setSize] = useState(100);
   const [blobs, setBlobs] = useState<BlobProps[]>([]);
   const [fills] = useState<string[]>(['#D93F4C', '#337FBD', '#228F67']);
+  const [odds] = useState<number[]>([0.25, 0.75]);
 
   useEffect(() => {
-    createBlob([0.95, 0.05]);
+    odds.forEach((odd, i) => createBlob(odd, fills[i]));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function createBlob(odds: number[]): void {
+  function createBlob(odd: number, fill: string): void {
     const size = (odd: number): number => {
-      return Math.sqrt(odd * 1000);
+      return Math.sqrt(odd * 10000);
     };
-    odds.forEach((odd, i) => {
-      const createPath = (odd: number): string => {
-        const seed = Math.random();
-        return blob.svgPath({
-          seed,
-          extraPoints: 8,
-          randomness: 4,
-          size: size(odd),
-        });
-      };
+    const createPath = (odd: number): string => {
+      const seed = Math.random();
+      return blob.svgPath({
+        seed,
+        extraPoints: 8,
+        randomness: 4,
+        size: size(odd),
+      });
+    };
 
-      const path = createPath(odd);
-      const fill = fills[i];
-      setBlobs((prev) => [...prev, { path, size: size(odd), fill }]);
-    });
+    if (odd >= 0.5) {
+      setSize(size(odd));
+    }
+
+    setBlobs((prev) => [
+      ...prev,
+      { path: createPath(odd), size: size(odd), fill, odd },
+    ]);
   }
 
   return (
-    <>
-      <Container>
-        {blobs.map((blob, i) => {
-          return (
-            <BlobContainer key={blob.path} tabIndex={0} size={blob.size}>
-              <Blob {...blob} />
-            </BlobContainer>
-          );
-        })}
-      </Container>
-    </>
+    <Container>
+      {blobs.map((blob, i) => {
+        return (
+          <BlobContainer key={blob.path} tabIndex={0} size={size}>
+            <Blob key={i} {...blob} />
+          </BlobContainer>
+        );
+      })}
+    </Container>
   );
 }
 
