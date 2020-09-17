@@ -5,14 +5,14 @@ import * as blob from 'blobs/v2';
 import { Blob, BlobProps } from './Blob';
 import logo from './react.svg';
 
-const BlobContainer = styled.div`
+export const BlobContainer = styled.div<{ size: number }>`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  width: ${({ size }: { size: number }) => size && `${size}px`};
-  height: ${({ size }: { size: number }) => size && `${size}px`};
-  /* outline: 2px solid red; */
+  width: ${({ size }) => size && `${size}px`};
+  height: ${({ size }) => size && `${size}px`};
+  border-radius: 100%;
 `;
 
 const Container = styled.div`
@@ -36,6 +36,7 @@ function getRandomColor() {
 function App() {
   const [blobs, setBlobs] = useState<BlobProps[]>([]);
   const [count, setCount] = useState(0);
+  const [size, setSize] = useState(128);
   const [recentBlob, setRecentBlob] = useState<BlobProps | undefined>(
     undefined
   );
@@ -46,7 +47,6 @@ function App() {
 
   function createBlob(index: number): void {
     const seed = Math.random();
-    const size = 32;
     const generation = 1;
     const path = blob.svgPath({
       seed,
@@ -110,18 +110,23 @@ function App() {
     };
 
     setBlobs(newBlobs);
+    setSize(size);
     setRecentBlob(newBlobs[i]);
     setCount(
       (prev) => prev + (Math.pow(generation, 2) - Math.pow(generation - 1, 2))
     );
   }
 
+  useEffect(() => {
+    console.log(size);
+  }, [size]);
+
   return (
     <>
       <img src={logo} className="App-logo" alt="logo" />
       <div>Count: {count}</div>
       <button onClick={() => createBlob(blobs.length)}>Click Me</button>
-      <BlobContainer size={32}>
+      <BlobContainer size={128}>
         {recentBlob && <Blob {...recentBlob} />}
       </BlobContainer>
       <Container>
@@ -141,7 +146,7 @@ function App() {
             <BlobContainer
               key={blob.id}
               tabIndex={0}
-              size={blob.size}
+              size={128}
               onClick={() => i !== 0 && splitBlob(i)}
               onKeyPress={(e) => {
                 console.log('e.key', e.target);

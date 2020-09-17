@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import styled from 'styled-components';
+// import styled from 'styled-components';
+
+import { BlobContainer } from './App';
 
 export interface BlobProps {
   size: number;
@@ -10,16 +12,6 @@ export interface BlobProps {
   children: BlobProps[] | undefined;
   index: number;
 }
-
-const BlobContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  width: ${({ size }: { size: number }) => size && `${size}px`};
-  height: ${({ size }: { size: number }) => size && `${size}px`};
-  /* border: 2px solid orange; */
-`;
 
 export const Blob: FunctionComponent<BlobProps> = (props) => {
   return props.children ? (
