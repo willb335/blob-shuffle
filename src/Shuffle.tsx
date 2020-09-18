@@ -61,7 +61,8 @@ export function Shuffle() {
     const column = heights.indexOf(Math.min(...heights)); // Basic masonry-grid placing, puts tile into the smallest column using Math.min
     const xy: XY = [
       (bounds.width / columns) * column,
-      (heights[column] += child.height / 2 + 30) - child.height / 2,
+      (heights[column] += child.height / 2 + (i < columns ? 0 : 30)) -
+        child.height / 2,
     ]; // X = container width / number of columns * column index, Y = it's just the height of the current column
     return {
       ...child,
