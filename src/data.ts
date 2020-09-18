@@ -35,25 +35,29 @@ export const createBlobs = (columns: number): BlobData[] => {
     }
   };
 
-  const height = randomIntFromInterval(blobSize()[0], blobSize()[1]);
-  const fills = [
-    '#FF0066',
-    '#8A3FFC',
-    '#FA4D56',
-    '#F1C21B',
-    '#08BDBA',
-    '#0F62FE',
-    '#24A148',
-  ];
-  const seed = Math.random();
-  const fill = fills[randomIntFromInterval(0, 6)];
+  const twins = Array.from(Array(5)).map((_, i) => {
+    const height = randomIntFromInterval(blobSize()[0], blobSize()[1]);
+    const fills = [
+      '#FF0066',
+      '#8A3FFC',
+      '#FA4D56',
+      '#F1C21B',
+      '#08BDBA',
+      '#0F62FE',
+      '#24A148',
+    ];
+    const seed = Math.random();
+    const fill = fills[randomIntFromInterval(0, 6)];
 
-  return Array.from(Array(2)).map((_, i) => {
-    return {
-      key: Date.now().toString() + i,
-      path: createBlob(height, seed),
-      height: height,
-      fill,
-    };
+    return Array.from(Array(2)).map((_, j) => {
+      return {
+        key: Date.now().toString() + j + i,
+        path: createBlob(height, seed),
+        height: height,
+        fill,
+      };
+    });
   });
+
+  return twins.flat();
 };
