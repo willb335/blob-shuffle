@@ -1,7 +1,25 @@
+import * as blob from 'blobs/v2';
+
 export interface Data {
   css: string;
   height: number;
 }
+
+const createBlob = (size: number): string => {
+  const seed = Math.random();
+  return blob.svgPath({
+    seed,
+    extraPoints: 8,
+    randomness: 4,
+    size,
+  });
+};
+
+export const blobs = Array.from(Array(20)).map((_, i) => ({
+  path: createBlob(100),
+  height: 100,
+  fill: 'pink',
+}));
 
 export const images: Data[] = [
   {

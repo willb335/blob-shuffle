@@ -5,7 +5,8 @@ import styled from 'styled-components';
 
 import { useMeasure } from './useMeasure';
 import { useMedia } from './useMedia';
-import { images } from './data';
+import { images, blobs } from './data';
+import { Blob } from './Blob';
 
 type XY = [number, number];
 
@@ -37,7 +38,7 @@ const List = styled.div`
   }
 `;
 
-export function App() {
+export function Shuffle() {
   // Hook1: Tie media queries to the number of columns
   const columns = useMedia(
     ['(min-width: 1500px)', '(min-width: 1000px)', '(min-width: 600px)'],
@@ -47,9 +48,11 @@ export function App() {
   // Hook2: Measure the width of the container element
   const [bind, bounds] = useMeasure();
   // Hook3: Hold items
-  const [items, setItems] = useState(images);
+  const [items, setItems] = useState(blobs);
   // Hook4: shuffle data every 2 seconds
-  useEffect(() => void setInterval(() => setItems(shuffle), 2000), []);
+  useEffect(() => {
+    void setInterval(() => setItems(shuffle), 2000);
+  }, []);
   // Form a grid of stacked items using width & columns we got from hooks 1 & 2
   let heights = new Array(columns).fill(0); // Each column gets a height starting with zero
   let gridItems = items.map((child, i) => {
@@ -77,19 +80,24 @@ export function App() {
   // Render the grid
   return (
     <List {...bind} style={{ height: Math.max(...heights) }}>
-      {transitions.map(({ item, props: { xy, ...rest }, key }: any) => (
-        <animated.div
-          key={key}
-          style={{
-            transform: xy.interpolate(
-              (x: number, y: number) => `translate3d(${x}px,${y}px,0)`
-            ),
-            ...rest,
-          }}
-        >
-          <div style={{ backgroundImage: item.css }} />
-        </animated.div>
-      ))}
+      {transitions.map(
+        ({ item, props: { xy, ...rest }, key }: any, i: number) => (
+          <animated.div
+            key={key + i}
+            style={{
+              transform: xy.interpolate(
+                (x: number, y: number) => `translate3d(${x}px,${y}px,0)`
+              ),
+              ...rest,
+            }}
+          >
+            <div>
+              <Blob size={item.height} fill={item.fill} path={item.path} />
+            </div>
+            {/* <div style={{ backgroundImage: item.css }} /> */}
+          </animated.div>
+        )
+      )}
     </List>
   );
 }
