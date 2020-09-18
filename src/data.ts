@@ -15,11 +15,15 @@ const createBlob = (size: number): string => {
   });
 };
 
-export const blobs = Array.from(Array(20)).map((_, i) => ({
-  path: createBlob(100),
-  height: 100,
-  fill: 'pink',
-}));
+export const blobs = Array.from(Array(15)).map((_, i) => {
+  const height = 100;
+
+  return {
+    path: createBlob(height),
+    height,
+    fill: 'pink',
+  };
+});
 
 export const images: Data[] = [
   {

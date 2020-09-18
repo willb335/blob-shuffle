@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTransition, animated } from 'react-spring';
 import shuffle from 'lodash.shuffle';
 import styled from 'styled-components';
+import * as blob from 'blobs/v2';
 
 import { useMeasure } from './useMeasure';
 import { useMedia } from './useMedia';
@@ -25,8 +26,11 @@ const List = styled.div`
 
   & div > div {
     position: relative;
-    background-size: cover;
-    background-position: center center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-size: cover;
+    background-position: center center; */
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -35,6 +39,7 @@ const List = styled.div`
     line-height: 10px;
     border-radius: 4px;
     box-shadow: 0px 10px 50px -10px rgba(0, 0, 0, 0.2);
+    border: 2px solid mediumseagreen;
   }
 `;
 
@@ -69,7 +74,7 @@ export function Shuffle() {
     };
   });
   // Hook5: Turn the static grid values into animated transitions, any addition, removal or change will be animated
-  const transitions = useTransition(gridItems, (item: any) => item.css, {
+  const transitions = useTransition(gridItems, (item: any) => item.path, {
     from: ({ xy, width, height }) => ({ xy, width, height, opacity: 0 }),
     enter: ({ xy, width, height }) => ({ xy, width, height, opacity: 1 }),
     update: ({ xy, width, height }) => ({ xy, width, height }),
@@ -80,24 +85,31 @@ export function Shuffle() {
   // Render the grid
   return (
     <List {...bind} style={{ height: Math.max(...heights) }}>
-      {transitions.map(
-        ({ item, props: { xy, ...rest }, key }: any, i: number) => (
+      {transitions.map(({ item, props: { xy, height, width }, key }: any) => {
+        console.log('item', item);
+        return (
           <animated.div
-            key={key + i}
+            key={key}
             style={{
               transform: xy.interpolate(
                 (x: number, y: number) => `translate3d(${x}px,${y}px,0)`
               ),
-              ...rest,
+              height,
+              width,
             }}
           >
-            <div>
-              <Blob size={item.height} fill={item.fill} path={item.path} />
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Blob fill={item.fill} size={item.height} path={item.path} />
             </div>
-            {/* <div style={{ backgroundImage: item.css }} /> */}
           </animated.div>
-        )
-      )}
+        );
+      })}
     </List>
   );
 }
