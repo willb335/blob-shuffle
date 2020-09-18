@@ -11,12 +11,12 @@ const createBlob = (size: number): string => {
     seed,
     extraPoints: 8,
     randomness: 4,
-    size,
+    size: size / 2,
   });
 };
 
 export const blobs = Array.from(Array(15)).map((_, i) => {
-  const height = 100;
+  const height = 300;
 
   return {
     path: createBlob(height),

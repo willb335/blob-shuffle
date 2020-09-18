@@ -98,13 +98,7 @@ export function Shuffle() {
               width,
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
+            <div>
               <Blob fill={item.fill} size={item.height} path={item.path} />
             </div>
           </animated.div>
