@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { useMeasure } from './useMeasure';
 import { useMedia } from './useMedia';
-import { images, blobs, BlobData } from './data';
+import { images, createBlobs, BlobData } from './data';
 import { Blob } from './Blob';
 
 type XY = [number, number];
@@ -21,6 +21,7 @@ const List = styled.div`
     position: absolute;
     will-change: transform, width, height, opacity;
     padding: 15px;
+    /* border: 2px solid blue; */
   }
 
   & div > div {
@@ -49,7 +50,7 @@ export function Shuffle() {
   // Hook2: Measure the width of the container element
   const [bind, bounds] = useMeasure();
   // Hook3: Hold items
-  const [items, setItems] = useState(blobs);
+  const [items, setItems] = useState(createBlobs(columns));
   // Hook4: shuffle data every 2 seconds
   useEffect(() => {
     void setInterval(() => setItems(shuffle), 6000);
@@ -60,7 +61,7 @@ export function Shuffle() {
     const column = heights.indexOf(Math.min(...heights)); // Basic masonry-grid placing, puts tile into the smallest column using Math.min
     const xy: XY = [
       (bounds.width / columns) * column,
-      (heights[column] += child.height / 2) - child.height / 2,
+      (heights[column] += child.height / 2 + 30) - child.height / 2,
     ]; // X = container width / number of columns * column index, Y = it's just the height of the current column
     return {
       ...child,
@@ -82,8 +83,6 @@ export function Shuffle() {
   return (
     <List {...bind} style={{ height: Math.max(...heights) }}>
       {transitions.map(({ item, props: { xy, height, width }, key }: any) => {
-        console.log('height', height);
-
         return (
           <animated.div
             key={key}
@@ -91,7 +90,7 @@ export function Shuffle() {
               transform: xy.interpolate(
                 (x: number, y: number) => `translate3d(${x}px,${y}px,0)`
               ),
-              height,
+              height: height + 30,
               width,
             }}
           >

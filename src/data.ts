@@ -11,13 +11,13 @@ export interface BlobData {
   fill: string;
 }
 
-const createBlob = (size: number): string => {
+const createBlob = (height: number): string => {
   const seed = Math.random();
   return blob.svgPath({
     seed,
     extraPoints: 8,
     randomness: 4,
-    size: size / 2 - 30,
+    size: height / 2,
   });
 };
 
@@ -26,24 +26,39 @@ const randomIntFromInterval = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-export const blobs: BlobData[] = Array.from(Array(15)).map((_, i) => {
-  const height = randomIntFromInterval(100, 750);
-  const fills = [
-    '#FF0066',
-    '#8A3FFC',
-    '#FA4D56',
-    '#F1C21B',
-    '#08BDBA',
-    '#0F62FE',
-    '#24A148',
-  ];
-
-  return {
-    path: createBlob(height),
-    height,
-    fill: fills[randomIntFromInterval(0, 6)],
+export const createBlobs = (columns: number): BlobData[] => {
+  const blobSize = () => {
+    switch (columns) {
+      case 3:
+        return [200, 500];
+      case 4:
+        return [300, 750];
+      case 5:
+        return [400, 1000];
+      default:
+        return [100, 250];
+    }
   };
-});
+
+  return Array.from(Array(15)).map((_, i) => {
+    const height = randomIntFromInterval(blobSize()[0], blobSize()[1]);
+    const fills = [
+      '#FF0066',
+      '#8A3FFC',
+      '#FA4D56',
+      '#F1C21B',
+      '#08BDBA',
+      '#0F62FE',
+      '#24A148',
+    ];
+
+    return {
+      path: createBlob(height),
+      height: height,
+      fill: fills[randomIntFromInterval(0, 6)],
+    };
+  });
+};
 
 export const images: Data[] = [
   {

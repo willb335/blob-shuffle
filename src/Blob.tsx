@@ -2,8 +2,8 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 
 const Svg = styled.svg`
-  animation-name: rotate;
-  animation-duration: 6s;
+  /* animation-name: rotate;
+  animation-duration: 20s;
   animation-iteration-count: infinite;
   transform-origin: 50% 50%;
   display: inline-block;
@@ -15,7 +15,7 @@ const Svg = styled.svg`
     100% {
       transform: rotate(360deg);
     }
-  }
+  } */
 `;
 
 export interface BlobProps {
