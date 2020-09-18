@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import { Shuffle } from './Shuffle';
 import * as serviceWorker from './serviceWorker';
 
 import { GlobalStyle } from './styles';
@@ -8,7 +8,7 @@ import { GlobalStyle } from './styles';
 ReactDOM.render(
   <React.StrictMode>
     <GlobalStyle />
-    <App />
+    <Shuffle />
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -1,9 +1,19 @@
 import { useRef, useState, useEffect } from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
 
-export function useMeasure() {
-  const ref = useRef() as React.MutableRefObject<HTMLInputElement>;
-  const [bounds, setBounds] = useState({
+export interface Bounds {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+export function useMeasure(): [
+  { ref: React.MutableRefObject<HTMLDivElement> },
+  Bounds
+] {
+  const ref = useRef() as React.MutableRefObject<HTMLDivElement>;
+  const [bounds, setBounds] = useState<Bounds>({
     left: 0,
     top: 0,
     width: 0,

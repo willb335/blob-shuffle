@@ -11,10 +11,10 @@ export const GlobalStyle = createGlobalStyle`
  * 2. Prevent adjustments of font size after orientation changes in iOS.
  */
 
-html {
-  line-height: 1.15; /* 1 */
-  -webkit-text-size-adjust: 100%; /* 2 */
+* {
+  box-sizing: border-box;
 }
+
 
 html,
 body,
@@ -36,14 +36,6 @@ body,
 
 /* Sections
    ========================================================================== */
-
-/**
- * Remove the margin in all browsers.
- */
-
-body {
-  margin: 0;
-}
 
 /**
  * Render the main element consistently in IE.

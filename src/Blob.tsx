@@ -1,4 +1,22 @@
 import React, { FunctionComponent } from 'react';
+import styled from 'styled-components';
+
+const Svg = styled.svg`
+  /* animation-name: rotate;
+  animation-duration: 20s;
+  animation-iteration-count: infinite;
+  transform-origin: 50% 50%;
+  display: inline-block;
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  } */
+`;
 
 export interface BlobProps {
   size: number;
@@ -8,8 +26,8 @@ export interface BlobProps {
 
 export const Blob: FunctionComponent<BlobProps> = ({ size, path, fill }) => {
   return (
-    <svg width={size} height={size}>
+    <Svg width={size} height={size}>
       <path d={path} fill={fill} />
-    </svg>
+    </Svg>
   );
 };
