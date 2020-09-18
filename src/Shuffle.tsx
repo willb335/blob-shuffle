@@ -34,7 +34,11 @@ const List = styled.div`
   }
 `;
 
-const Card = styled.div<{ isCurrentItem: boolean; fill: string }>`
+const Card = styled.div<{
+  isCurrentItem: boolean;
+  fill: string;
+  isMatched: boolean;
+}>`
   position: relative;
   display: flex;
   justify-content: center;
@@ -48,11 +52,13 @@ const Card = styled.div<{ isCurrentItem: boolean; fill: string }>`
   border-radius: 4px;
   box-shadow: 0px 10px 50px -10px rgba(0, 0, 0, 0.2);
   outline: ${(props) =>
-    props.isCurrentItem ? `1px solid ${props.fill}` : 'none'};
+    props.isCurrentItem ? `2px solid ${props.fill}` : 'none'};
+  background-color: ${(props) => (props.isMatched ? `black` : 'white')};
 `;
 
 export function Shuffle() {
   const [currentItem, setCurrentItem] = useState<Item | null>(null);
+  const [matches, setMatches] = useState<Item[]>([]);
 
   useEffect(() => console.log('currentItem', currentItem), [currentItem]);
   // Hook1: Tie media queries to the number of columns
@@ -94,6 +100,14 @@ export function Shuffle() {
     config: { mass: 5, tension: 500, friction: 100 },
     trail: 25,
   });
+
+  function handleItemClick(item: Item): void {
+    if (item.path === currentItem?.path && item.key !== currentItem.key) {
+      setMatches((prev) => [...prev, item, currentItem]);
+    }
+    console.log('matches', matches);
+    setCurrentItem(item);
+  }
   // Render the grid
   return (
     <List {...bind} style={{ height: Math.max(...heights) }}>
@@ -110,9 +124,13 @@ export function Shuffle() {
             }}
           >
             <Card
-              onClick={() => setCurrentItem(item)}
+              onClick={() => handleItemClick(item)}
               isCurrentItem={item.key === currentItem?.key}
               fill={item.fill}
+              isMatched={
+                matches.filter((m: Item): boolean => item.key === m.key)
+                  .length > 0
+              }
             >
               <Blob fill={item.fill} size={item.height} path={item.path} />
             </Card>
