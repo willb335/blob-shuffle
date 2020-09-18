@@ -5,23 +5,43 @@ export interface Data {
   height: number;
 }
 
+export interface BlobData {
+  path: string;
+  height: number;
+  fill: string;
+}
+
 const createBlob = (size: number): string => {
   const seed = Math.random();
   return blob.svgPath({
     seed,
     extraPoints: 8,
     randomness: 4,
-    size: size / 2,
+    size: size / 2 - 30,
   });
 };
 
-export const blobs = Array.from(Array(15)).map((_, i) => {
-  const height = 300;
+const randomIntFromInterval = (min: number, max: number): number => {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+export const blobs: BlobData[] = Array.from(Array(15)).map((_, i) => {
+  const height = randomIntFromInterval(100, 750);
+  const fills = [
+    '#FF0066',
+    '#8A3FFC',
+    '#FA4D56',
+    '#F1C21B',
+    '#08BDBA',
+    '#0F62FE',
+    '#24A148',
+  ];
 
   return {
     path: createBlob(height),
     height,
-    fill: 'pink',
+    fill: fills[randomIntFromInterval(0, 6)],
   };
 });
 

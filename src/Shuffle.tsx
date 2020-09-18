@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useTransition, animated } from 'react-spring';
 import shuffle from 'lodash.shuffle';
 import styled from 'styled-components';
-import * as blob from 'blobs/v2';
 
 import { useMeasure } from './useMeasure';
 import { useMedia } from './useMedia';
-import { images, blobs } from './data';
+import { images, blobs, BlobData } from './data';
 import { Blob } from './Blob';
 
 type XY = [number, number];
@@ -29,8 +28,6 @@ const List = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    /* background-size: cover;
-    background-position: center center; */
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -39,7 +36,6 @@ const List = styled.div`
     line-height: 10px;
     border-radius: 4px;
     box-shadow: 0px 10px 50px -10px rgba(0, 0, 0, 0.2);
-    border: 2px solid mediumseagreen;
   }
 `;
 
@@ -56,7 +52,7 @@ export function Shuffle() {
   const [items, setItems] = useState(blobs);
   // Hook4: shuffle data every 2 seconds
   useEffect(() => {
-    void setInterval(() => setItems(shuffle), 2000);
+    void setInterval(() => setItems(shuffle), 6000);
   }, []);
   // Form a grid of stacked items using width & columns we got from hooks 1 & 2
   let heights = new Array(columns).fill(0); // Each column gets a height starting with zero
@@ -74,7 +70,7 @@ export function Shuffle() {
     };
   });
   // Hook5: Turn the static grid values into animated transitions, any addition, removal or change will be animated
-  const transitions = useTransition(gridItems, (item: any) => item.path, {
+  const transitions = useTransition(gridItems, (item: BlobData) => item.path, {
     from: ({ xy, width, height }) => ({ xy, width, height, opacity: 0 }),
     enter: ({ xy, width, height }) => ({ xy, width, height, opacity: 1 }),
     update: ({ xy, width, height }) => ({ xy, width, height }),
@@ -86,7 +82,8 @@ export function Shuffle() {
   return (
     <List {...bind} style={{ height: Math.max(...heights) }}>
       {transitions.map(({ item, props: { xy, height, width }, key }: any) => {
-        console.log('item', item);
+        console.log('height', height);
+
         return (
           <animated.div
             key={key}
