@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { useMeasure } from './useMeasure';
 import { useMedia } from './useMedia';
-import { images, createBlobs, BlobData } from './data';
+import { createBlobs, BlobData } from './data';
 import { Blob } from './Blob';
 
 type XY = [number, number];
@@ -53,7 +53,7 @@ export function Shuffle() {
   const [items, setItems] = useState(createBlobs(columns));
   // Hook4: shuffle data every 2 seconds
   useEffect(() => {
-    void setInterval(() => setItems(shuffle), 6000);
+    void setInterval(() => setItems(shuffle), 3000);
   }, []);
   // Form a grid of stacked items using width & columns we got from hooks 1 & 2
   let heights = new Array(columns).fill(0); // Each column gets a height starting with zero
@@ -72,7 +72,7 @@ export function Shuffle() {
     };
   });
   // Hook5: Turn the static grid values into animated transitions, any addition, removal or change will be animated
-  const transitions = useTransition(gridItems, (item: BlobData) => item.path, {
+  const transitions = useTransition(gridItems, (item: BlobData) => item.key, {
     from: ({ xy, width, height }) => ({ xy, width, height, opacity: 0 }),
     enter: ({ xy, width, height }) => ({ xy, width, height, opacity: 1 }),
     update: ({ xy, width, height }) => ({ xy, width, height }),
@@ -86,7 +86,7 @@ export function Shuffle() {
       {transitions.map(({ item, props: { xy, height, width }, key }: any) => {
         return (
           <animated.div
-            key={key}
+            key={item.key}
             style={{
               transform: xy.interpolate(
                 (x: number, y: number) => `translate3d(${x}px,${y}px,0)`
