@@ -37,7 +37,7 @@ const List = styled.div`
 const Card = styled.div<{
   isCurrentItem: boolean;
   fill: string;
-  isMatched: boolean;
+  size: number;
 }>`
   position: relative;
   display: flex;
@@ -49,16 +49,16 @@ const Card = styled.div<{
   text-transform: uppercase;
   font-size: 10px;
   line-height: 10px;
-  border-radius: 4px;
+  border-radius: 50%;
   box-shadow: 0px 10px 50px -10px rgba(0, 0, 0, 0.2);
   outline: ${(props) =>
     props.isCurrentItem ? `2px solid ${props.fill}` : 'none'};
-  background-color: ${(props) => (props.isMatched ? `black` : 'white')};
+  background-color: black;
 `;
 
 export function Shuffle() {
   const [currentItem, setCurrentItem] = useState<Item | null>(null);
-  const [matches, setMatches] = useState<Item[]>([]);
+  const [match, setMatch] = useState<Item[]>([]);
 
   useEffect(() => console.log('currentItem', currentItem), [currentItem]);
   // Hook1: Tie media queries to the number of columns
@@ -73,7 +73,7 @@ export function Shuffle() {
   const [items, setItems] = useState(createBlobs(columns));
   // Hook4: shuffle data every 2 seconds
   useEffect(() => {
-    void setInterval(() => setItems(shuffle), 3000);
+    void setInterval(() => setItems(shuffle), 2000);
   }, []);
   // Form a grid of stacked items using width & columns we got from hooks 1 & 2
   let heights = new Array(columns).fill(0); // Each column gets a height starting with zero
@@ -103,37 +103,39 @@ export function Shuffle() {
 
   function handleItemClick(item: Item): void {
     if (item.path === currentItem?.path && item.key !== currentItem.key) {
-      setMatches((prev) => [...prev, item, currentItem]);
+      setItems((prev) => prev.filter((curItem) => item.path !== curItem.path));
+      setMatch([currentItem, item]);
     }
-    console.log('matches', matches);
     setCurrentItem(item);
   }
   // Render the grid
   return (
     <List {...bind} style={{ height: Math.max(...heights) }}>
       {transitions.map(({ item, props: { xy, height, width }, key }: any) => {
-        const isMatched =
-          matches.filter((m: Item): boolean => item.key === m.key).length > 0;
+        const isMatched: boolean =
+          match.filter((m) => m.key === item.key).length > 0;
         return (
-          <animated.div
-            key={item.key}
-            style={{
-              transform: xy.interpolate(
-                (x: number, y: number) => `translate3d(${x}px,${y}px,0)`
-              ),
-              height: height + 30,
-              width,
-            }}
-          >
-            <Card
-              onClick={() => handleItemClick(item)}
-              isCurrentItem={item.key === currentItem?.key}
-              fill={item.fill}
-              isMatched={isMatched}
+          !isMatched && (
+            <animated.div
+              key={item.key}
+              style={{
+                transform: xy.interpolate(
+                  (x: number, y: number) => `translate3d(${x}px,${y}px,0)`
+                ),
+                height: height + 30,
+                width,
+              }}
             >
-              <Blob fill={item.fill} size={item.height} path={item.path} />
-            </Card>
-          </animated.div>
+              <Card
+                size={item.width}
+                onClick={() => handleItemClick(item)}
+                isCurrentItem={item.key === currentItem?.key}
+                fill={item.fill}
+              >
+                <Blob fill={item.fill} size={item.height} path={item.path} />
+              </Card>
+            </animated.div>
+          )
         );
       })}
     </List>

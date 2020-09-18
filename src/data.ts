@@ -27,7 +27,7 @@ export const createBlobs = (columns: number): BlobData[] => {
       case 3:
         return [200, 500];
       case 4:
-        return [300, 750];
+        return [250, 600];
       case 5:
         return [400, 1000];
       default:
