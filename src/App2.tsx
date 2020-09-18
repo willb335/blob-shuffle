@@ -1,13 +1,15 @@
-import { render } from 'react-dom';
 import React, { useState, useEffect } from 'react';
 import { useTransition, animated } from 'react-spring';
 import shuffle from 'lodash.shuffle';
+import styled from 'styled-components';
+
 import { useMeasure } from './useMeasure';
 import { useMedia } from './useMedia';
 import { images } from './data';
-import './styles.css';
 
-function App() {
+type XY = [number, number];
+
+export function App() {
   // Hook1: Tie media queries to the number of columns
   const columns = useMedia(
     ['(min-width: 1500px)', '(min-width: 1000px)', '(min-width: 600px)'],
@@ -24,7 +26,7 @@ function App() {
   let heights = new Array(columns).fill(0); // Each column gets a height starting with zero
   let gridItems = items.map((child, i) => {
     const column = heights.indexOf(Math.min(...heights)); // Basic masonry-grid placing, puts tile into the smallest column using Math.min
-    const xy = [
+    const xy: XY = [
       (bounds.width / columns) * column,
       (heights[column] += child.height / 2) - child.height / 2,
     ]; // X = container width / number of columns * column index, Y = it's just the height of the current column
@@ -36,7 +38,7 @@ function App() {
     };
   });
   // Hook5: Turn the static grid values into animated transitions, any addition, removal or change will be animated
-  const transitions = useTransition(gridItems, (item) => item.css, {
+  const transitions = useTransition(gridItems, (item: any) => item.css, {
     from: ({ xy, width, height }) => ({ xy, width, height, opacity: 0 }),
     enter: ({ xy, width, height }) => ({ xy, width, height, opacity: 1 }),
     update: ({ xy, width, height }) => ({ xy, width, height }),
@@ -47,11 +49,13 @@ function App() {
   // Render the grid
   return (
     <div {...bind} className="list" style={{ height: Math.max(...heights) }}>
-      {transitions.map(({ item, props: { xy, ...rest }, key }) => (
+      {transitions.map(({ item, props: { xy, ...rest }, key }: any) => (
         <animated.div
           key={key}
           style={{
-            transform: xy.interpolate((x, y) => `translate3d(${x}px,${y}px,0)`),
+            transform: xy.interpolate(
+              (x: number, y: number) => `translate3d(${x}px,${y}px,0)`
+            ),
             ...rest,
           }}
         >
@@ -61,5 +65,3 @@ function App() {
     </div>
   );
 }
-
-render(<App />, document.getElementById('root'));
