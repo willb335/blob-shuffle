@@ -9,6 +9,34 @@ import { images } from './data';
 
 type XY = [number, number];
 
+const List = styled.div`
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir,
+    helvetica neue, helvetica, ubuntu, roboto, noto, segoe ui, arial, sans-serif;
+  width: 100%;
+  height: 100%;
+
+  & > div {
+    position: absolute;
+    will-change: transform, width, height, opacity;
+    padding: 15px;
+  }
+
+  & div > div {
+    position: relative;
+    background-size: cover;
+    background-position: center center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    text-transform: uppercase;
+    font-size: 10px;
+    line-height: 10px;
+    border-radius: 4px;
+    box-shadow: 0px 10px 50px -10px rgba(0, 0, 0, 0.2);
+  }
+`;
+
 export function App() {
   // Hook1: Tie media queries to the number of columns
   const columns = useMedia(
@@ -48,7 +76,7 @@ export function App() {
   });
   // Render the grid
   return (
-    <div {...bind} className="list" style={{ height: Math.max(...heights) }}>
+    <List {...bind} style={{ height: Math.max(...heights) }}>
       {transitions.map(({ item, props: { xy, ...rest }, key }: any) => (
         <animated.div
           key={key}
@@ -62,6 +90,6 @@ export function App() {
           <div style={{ backgroundImage: item.css }} />
         </animated.div>
       ))}
-    </div>
+    </List>
   );
 }

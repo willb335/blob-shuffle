@@ -11,37 +11,8 @@ export const GlobalStyle = createGlobalStyle`
  * 2. Prevent adjustments of font size after orientation changes in iOS.
  */
 
-.list {
-  position: relative;
-  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, ubuntu, roboto, noto,
-    segoe ui, arial, sans-serif;
-  width: 100%;
-  height: 100%;
-}
-
-.list > div {
-  position: absolute;
-  will-change: transform, width, height, opacity;
-  padding: 15px;
-}
-
-.list > div > div {
-  position: relative;
-  background-size: cover;
-  background-position: center center;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  text-transform: uppercase;
-  font-size: 10px;
-  line-height: 10px;
-  border-radius: 4px;
-  box-shadow: 0px 10px 50px -10px rgba(0, 0, 0, 0.2);
-}
-
-html {
-  line-height: 1.15; /* 1 */
-  -webkit-text-size-adjust: 100%; /* 2 */
+* {
+  box-sizing: border-box;
 }
 
 html,
@@ -64,14 +35,6 @@ body,
 
 /* Sections
    ========================================================================== */
-
-/**
- * Remove the margin in all browsers.
- */
-
-body {
-  margin: 0;
-}
 
 /**
  * Render the main element consistently in IE.
