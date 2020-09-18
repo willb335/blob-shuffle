@@ -112,6 +112,8 @@ export function Shuffle() {
   return (
     <List {...bind} style={{ height: Math.max(...heights) }}>
       {transitions.map(({ item, props: { xy, height, width }, key }: any) => {
+        const isMatched =
+          matches.filter((m: Item): boolean => item.key === m.key).length > 0;
         return (
           <animated.div
             key={item.key}
@@ -127,10 +129,7 @@ export function Shuffle() {
               onClick={() => handleItemClick(item)}
               isCurrentItem={item.key === currentItem?.key}
               fill={item.fill}
-              isMatched={
-                matches.filter((m: Item): boolean => item.key === m.key)
-                  .length > 0
-              }
+              isMatched={isMatched}
             >
               <Blob fill={item.fill} size={item.height} path={item.path} />
             </Card>
