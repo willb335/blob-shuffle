@@ -10,7 +10,7 @@ import { Blob } from './Blob';
 
 type XY = [number, number];
 
-interface Item {
+export interface Item {
   key: string;
   path: string;
   height: number;
@@ -33,49 +33,26 @@ const List = styled.div`
   }
 `;
 
-const Card = styled.div<{
-  isCurrentItem: boolean;
-  fill: string;
-}>`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  text-transform: uppercase;
-  font-size: 10px;
-  line-height: 10px;
-  border-radius: 100%;
-  box-shadow: 0px 10px 50px -10px rgba(0, 0, 0, 0.2);
-  outline: ${(props) =>
-    props.isCurrentItem ? `2px solid ${props.fill}` : 'none'};
-  background-color: black;
-`;
-
 export function Shuffle() {
   const [currentItem, setCurrentItem] = useState<Item | null>(null);
   const [match, setMatch] = useState<Item[]>([]);
-  const [level, setLevel] = useState(1);
 
   // Tie media queries to the number of columns
   const columns = useMedia(
     ['(min-width: 1500px)', '(min-width: 1000px)', '(min-width: 600px)'],
-    [8, 6, 4],
+    [12, 10, 6],
     2
   );
-  const [items, setItems] = useState(createBlobs(columns, 20));
+  const [items, setItems] = useState(createBlobs(columns, 30));
   // Measure the width of the container element
   const [bind, bounds] = useMeasure();
   useEffect(() => {
-    void setInterval(() => setItems(shuffle), 2000);
+    void setInterval(() => setItems(shuffle), 3000);
   }, []);
 
   useEffect(() => {
     if (items.length === 0) {
       setItems(createBlobs(columns, 10));
-      setLevel((prev) => prev + 1);
     }
   }, [columns, items]);
 
@@ -131,13 +108,14 @@ export function Shuffle() {
                 width,
               }}
             >
-              <Card
-                onClick={() => handleItemClick(item)}
+              <Blob
                 isCurrentItem={item.key === currentItem?.key}
+                handleClick={handleItemClick}
                 fill={item.fill}
-              >
-                <Blob fill={item.fill} size={item.height} path={item.path} />
-              </Card>
+                size={item.height}
+                path={item.path}
+                item={item}
+              />
             </animated.div>
           )
         );
