@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "da943f19c41d6373685a4b7e48d4c553",
+    "revision": "321b38e283ec7a331a96e7c01e526762",
     "url": "/blob-shuffle/index.html"
   },
   {
