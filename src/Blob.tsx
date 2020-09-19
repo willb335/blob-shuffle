@@ -2,20 +2,10 @@ import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 
 const Svg = styled.svg`
-  /* animation-name: rotate;
-  animation-duration: 20s;
-  animation-iteration-count: infinite;
-  transform-origin: 50% 50%;
-  display: inline-block;
-
-  @keyframes rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  } */
+  /* box-shadow: 0px 10px 50px -10px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background-color: black;
+  padding: 10px; */
 `;
 
 export interface BlobProps {

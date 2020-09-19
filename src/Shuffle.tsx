@@ -30,14 +30,12 @@ const List = styled.div`
     position: absolute;
     will-change: transform, width, height, opacity;
     padding: 15px;
-    /* border: 2px solid blue; */
   }
 `;
 
 const Card = styled.div<{
   isCurrentItem: boolean;
   fill: string;
-  size: number;
 }>`
   position: relative;
   display: flex;
@@ -49,7 +47,7 @@ const Card = styled.div<{
   text-transform: uppercase;
   font-size: 10px;
   line-height: 10px;
-  border-radius: 50%;
+  border-radius: 100%;
   box-shadow: 0px 10px 50px -10px rgba(0, 0, 0, 0.2);
   outline: ${(props) =>
     props.isCurrentItem ? `2px solid ${props.fill}` : 'none'};
@@ -59,23 +57,29 @@ const Card = styled.div<{
 export function Shuffle() {
   const [currentItem, setCurrentItem] = useState<Item | null>(null);
   const [match, setMatch] = useState<Item[]>([]);
+  const [level, setLevel] = useState(1);
 
-  useEffect(() => console.log('currentItem', currentItem), [currentItem]);
-  // Hook1: Tie media queries to the number of columns
+  // Tie media queries to the number of columns
   const columns = useMedia(
     ['(min-width: 1500px)', '(min-width: 1000px)', '(min-width: 600px)'],
-    [5, 4, 3],
+    [8, 6, 4],
     2
   );
-  // Hook2: Measure the width of the container element
+  const [items, setItems] = useState(createBlobs(columns, 20));
+  // Measure the width of the container element
   const [bind, bounds] = useMeasure();
-  // Hook3: Hold items
-  const [items, setItems] = useState(createBlobs(columns));
-  // Hook4: shuffle data every 2 seconds
   useEffect(() => {
     void setInterval(() => setItems(shuffle), 2000);
   }, []);
-  // Form a grid of stacked items using width & columns we got from hooks 1 & 2
+
+  useEffect(() => {
+    if (items.length === 0) {
+      setItems(createBlobs(columns, 10));
+      setLevel((prev) => prev + 1);
+    }
+  }, [columns, items]);
+
+  // Form a grid of stacked items
   let heights = new Array(columns).fill(0); // Each column gets a height starting with zero
   let gridItems: Item[] = items.map((child, i) => {
     const column = heights.indexOf(Math.min(...heights)); // Basic masonry-grid placing, puts tile into the smallest column using Math.min
@@ -91,7 +95,7 @@ export function Shuffle() {
       height: child.height / 2,
     };
   });
-  // Hook5: Turn the static grid values into animated transitions, any addition, removal or change will be animated
+  // Turn the static grid values into animated transitions, any addition, removal or change will be animated
   const transitions = useTransition(gridItems, (item: BlobData) => item.key, {
     from: ({ xy, width, height }) => ({ xy, width, height, opacity: 0 }),
     enter: ({ xy, width, height }) => ({ xy, width, height, opacity: 1 }),
@@ -112,12 +116,13 @@ export function Shuffle() {
   return (
     <List {...bind} style={{ height: Math.max(...heights) }}>
       {transitions.map(({ item, props: { xy, height, width }, key }: any) => {
+        console.log('key', key);
         const isMatched: boolean =
           match.filter((m) => m.key === item.key).length > 0;
         return (
           !isMatched && (
             <animated.div
-              key={item.key}
+              key={key.toString()}
               style={{
                 transform: xy.interpolate(
                   (x: number, y: number) => `translate3d(${x}px,${y}px,0)`
@@ -127,7 +132,6 @@ export function Shuffle() {
               }}
             >
               <Card
-                size={item.width}
                 onClick={() => handleItemClick(item)}
                 isCurrentItem={item.key === currentItem?.key}
                 fill={item.fill}

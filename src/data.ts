@@ -21,7 +21,7 @@ const randomIntFromInterval = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-export const createBlobs = (columns: number): BlobData[] => {
+export const createBlobs = (columns: number, amount: number): BlobData[] => {
   const blobSize = (): [number, number] => {
     switch (columns) {
       case 3:
@@ -35,7 +35,7 @@ export const createBlobs = (columns: number): BlobData[] => {
     }
   };
 
-  const twins = Array.from(Array(5)).map((_, i) => {
+  const twins = Array.from(Array(amount)).map((_, i) => {
     const height = randomIntFromInterval(blobSize()[0], blobSize()[1]);
     const fills = [
       '#FF0066',
