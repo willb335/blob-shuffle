@@ -36,7 +36,6 @@ const List = styled.div`
 export function Shuffle() {
   const [currentItem, setCurrentItem] = useState<Item | null>(null);
   const [match, setMatch] = useState<Item[]>([]);
-
   // Tie media queries to the number of columns
   const columns = useMedia(
     ['(min-width: 1500px)', '(min-width: 1000px)', '(min-width: 600px)'],
@@ -46,8 +45,9 @@ export function Shuffle() {
   const [items, setItems] = useState(createBlobs(columns, 30));
   // Measure the width of the container element
   const [bind, bounds] = useMeasure();
+
   useEffect(() => {
-    void setInterval(() => setItems(shuffle), 3000);
+    void setInterval(() => setItems(shuffle), 3500);
   }, []);
 
   useEffect(() => {

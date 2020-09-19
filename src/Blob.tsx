@@ -3,10 +3,11 @@ import styled from 'styled-components';
 
 import { Item } from './Shuffle';
 
-const Svg = styled.svg<{ isCurrentItem: boolean }>`
+const Svg = styled.svg<{ isCurrentItem: boolean; fill: string }>`
   /* box-shadow: 0px 10px 50px -10px rgba(0, 0, 0, 0.2); */
   border-radius: 100%;
-  background-color: ${(props) => (props.isCurrentItem ? 'black' : 'none')};
+  background-color: ${(props) =>
+    props.isCurrentItem ? `${props.fill}` : 'none'};
 `;
 
 export interface BlobProps {
@@ -27,7 +28,7 @@ export const Blob: FunctionComponent<BlobProps> = ({
   isCurrentItem,
 }) => {
   return (
-    <Svg width={size} height={size} isCurrentItem={isCurrentItem}>
+    <Svg width={size} height={size} isCurrentItem={isCurrentItem} fill={fill}>
       <path d={path} fill={fill} onClick={() => handleClick(item)} />
     </Svg>
   );
