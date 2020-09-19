@@ -1,33 +1,35 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
 
-const Svg = styled.svg`
-  /* animation-name: rotate;
-  animation-duration: 20s;
-  animation-iteration-count: infinite;
-  transform-origin: 50% 50%;
-  display: inline-block;
+import { Item } from './Shuffle';
 
-  @keyframes rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  } */
+const Svg = styled.svg<{ isCurrentItem: boolean; fill: string }>`
+  /* box-shadow: 0px 10px 50px -10px rgba(0, 0, 0, 0.2); */
+  border-radius: 100%;
+  background-color: ${(props) =>
+    props.isCurrentItem ? `${props.fill}` : 'none'};
 `;
 
 export interface BlobProps {
   size: number;
   path: string;
   fill: string;
+  handleClick: Function;
+  item: Item;
+  isCurrentItem: boolean;
 }
 
-export const Blob: FunctionComponent<BlobProps> = ({ size, path, fill }) => {
+export const Blob: FunctionComponent<BlobProps> = ({
+  size,
+  path,
+  fill,
+  handleClick,
+  item,
+  isCurrentItem,
+}) => {
   return (
-    <Svg width={size} height={size}>
-      <path d={path} fill={fill} />
+    <Svg width={size} height={size} isCurrentItem={isCurrentItem} fill={fill}>
+      <path d={path} fill={fill} onClick={() => handleClick(item)} />
     </Svg>
   );
 };
